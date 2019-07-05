@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    username: postgres
+    password: pass123
+    url: jdbc:postgresql://localhost:5432/postgres
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: kotlin-back-server
