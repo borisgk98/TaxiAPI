@@ -1,0 +1,53 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: taxi-js-front-server-d
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: taxi-js-front-server
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: taxi-js-front-server
+        image: gcr.io/rich-sprite-242414/taxi-js-front-server
+        ports:
+        - containerPort: 3000
+        env:
+        - name: KAFKA_SERVER
+          value: kafka-taxi:9092
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: taxi-js-front-server-lb
+  labels:
+    app: taxi-js-front-server
+spec:
+  selector:
+    app: taxi-js-front-server
+  ports:
+    - name: api
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: taxi-js-front-server-cip
+  labels:
+    app: taxi-js-front-server
+    monitoring: taxi-js-front-server-monitor
+spec:
+  selector:
+    app: taxi-js-front-server
+  ports:
+    - name: api
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP

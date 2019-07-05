@@ -1,0 +1,7 @@
+[
+  "user.data",
+  "user.get",
+  "trip.create",
+  "trip.search",
+  "message.create"
+]
