@@ -32,8 +32,6 @@ class UserConsumer {
     @Throws(ServerException::class)
     fun userData(payload: String) {
         try {
-            logger.info("Receive payload:")
-            logger.info(payload)
             var userDto: UserDto? = null
             userDto = om!!.readValue<UserDto>(payload, UserDto::class.java!!)
             var user: User? = null
@@ -54,8 +52,6 @@ class UserConsumer {
     @KafkaListener(topics = ["request.user.get"])
     @Throws(ServerException::class)
     fun userGet(payload: String) {
-        logger.info("Receive payload:")
-        logger.info(payload)
         //        UserDto userDto = null;
         //        try {
         //            userDto = om.readValue(payload, UserDto.class);

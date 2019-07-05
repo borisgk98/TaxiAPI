@@ -33,8 +33,6 @@ class TripConsumer {
     @Throws(ServerException::class)
     fun tripCreate(payload: String) {
         try {
-            logger.info("Receive payload:")
-            logger.info(payload)
             var tripDto: TripDto? = null
             tripDto = om!!.readValue<TripDto>(payload, TripDto::class.java!!)
             val trip = tripService!!.saveTrip(mapper!!.map<Trip>(tripDto, Trip::class.java))
@@ -50,8 +48,6 @@ class TripConsumer {
     @Throws(ServerException::class)
     fun tripSearch(payload: String) {
         try {
-            logger.info("Receive payload:")
-            logger.info(payload)
             val trips = tripService!!.all
             val tripDtos = mapper!!.map(trips, List::class.java) as List<TripDto>
             kafkaTemplate!!.send("response.trip.search", om!!.writeValueAsString(tripDtos))

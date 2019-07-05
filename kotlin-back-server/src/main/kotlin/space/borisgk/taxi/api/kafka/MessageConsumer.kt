@@ -34,10 +34,6 @@ class MessageConsumer {
     @Throws(ServerException::class)
     fun messageCreate(payload: String) {
         try {
-            // TODO move to aspect
-            logger.info("Receive payload:")
-            logger.info(payload)
-
             var messageDto = om!!.readValue<MessageDto>(payload, MessageDto::class.java!!)
             var message = mapper!!.map<Message>(messageDto, Message::class.java)
             message.user = User(id = messageDto.userId)
@@ -57,10 +53,6 @@ class MessageConsumer {
     @Throws(ServerException::class)
     fun messageGetByTripId(payload: String) {
         try {
-            // TODO move to aspect
-            logger.info("Receive payload:")
-            logger.info(payload)
-
             val tripId = Integer.parseInt(payload)
             val messages = messageService!!.getAllByTripId(tripId)
             val messageDtos = mapper!!.map(messages, List::class.java) as List<MessageDto>
