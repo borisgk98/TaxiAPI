@@ -1,3 +1,46 @@
 entities:
+  - user:
+    - id
+    - avatarUrl
+    - firstName
+    - lastName
+    # List of authServices
+    - authServiceDatas
   
+  - authServiceData:
+    - id
+    # Reference to authService
+    - serviceId
+    - authToken
+    
+  - authService:
+    - id
+    - name
+    
+  - trip:
+    - id
+    - date
+    - latFrom
+    - latTo
+    - longFrom
+    - longTo
+    - users # array of trips
+    - status
+    - addressTo
+    - addressFrom 
 
+  - message:
+    - id
+    - data
+    - user
+    - tripId     
+    - date
+    - type
+
+  - messageType:
+    - TEXT
+    - PHOTO
+    - LOCATION
+    - ...
+
+      
