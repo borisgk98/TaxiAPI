@@ -36,6 +36,11 @@ entities:
     - tripId     
     - date
     - type
+    - status
+
+  - messageStatus:
+    - READ
+    - UNREAD
 
   - messageType:
     - TEXT
