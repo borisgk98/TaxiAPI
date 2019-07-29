@@ -24,7 +24,7 @@ entities:
     - latTo
     - longFrom
     - longTo
-    - users # array of trips
+    - users # array of users
     - status
     - addressTo
     - addressFrom 

@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    username: postgres
+    password:
+    url: jdbc:postgresql://borisgk.space:5439/taxi
