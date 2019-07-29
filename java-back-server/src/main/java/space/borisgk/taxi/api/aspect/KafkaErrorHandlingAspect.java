@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import space.borisgk.taxi.api.exception.IllegalAspectTargetException;
 import space.borisgk.taxi.api.exception.ServerException;
 
 import java.lang.reflect.Method;
@@ -31,21 +32,25 @@ public class KafkaErrorHandlingAspect {
 
     @Around("pointcut()")
     private void aroundAdvise(ProceedingJoinPoint call) throws Throwable{
+        if (call.getArgs().length != 1) {
+            logger.error("Illegal aspect target: method was annotated with @KafkaListener " +
+                    "should accept only one argument (payload)");
+            throw new IllegalAspectTargetException();
+        }
+        logger.info("Receive payload: ");
+        logger.info(call.getArgs()[0].toString());
         try {
             call.proceed();
-        }
-        catch (ServerException e) {
+        } catch (ServerException e) {
             MethodSignature signature = (MethodSignature) call.getSignature();
             Method method = signature.getMethod();
-            logger.error("Error while call method: " + method.getName());
+            logger.error("Error while call method: " + method.getDeclaringClass() + "." + method.getName());
             logger.error(e.getMessage());
             try {
                 kafkaTemplate.send("error", e.getMessage());
-            }
-            catch (Exception e2) {
+            } catch (Exception e2) {
                 logger.error("Error while send error message");
             }
-            return;
         }
     }
 }

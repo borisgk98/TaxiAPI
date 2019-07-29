@@ -32,7 +32,7 @@ public class MessageConsumer {
     @Autowired
     private Mapper mapper;
 
-    @KafkaListener(topics = "request.message.create", groupId = "server-java")
+    @KafkaListener(topics = "request.data.create", groupId = "server-java")
     public void messageCreate(String payload) throws ServerException {
         try {
             // TODO move to aspect
@@ -47,14 +47,14 @@ public class MessageConsumer {
             messageDto = mapper.map(message, MessageDto.class);
 
             // TODO высылать только сокетам, которые слушают чат
-            kafkaTemplate.send("response.message.create", om.writeValueAsString(messageDto));
+            kafkaTemplate.send("response.data.create", om.writeValueAsString(messageDto));
         }
         catch (Exception e) {
             throw new ServerException(e);
         }
     }
 
-    @KafkaListener(topics = "request.message.getByTripId", groupId = "server-java")
+    @KafkaListener(topics = "request.data.getByTripId", groupId = "server-java")
     public void messageGetByTripId(String payload) throws ServerException {
         try {
             // TODO move to aspect
@@ -70,7 +70,7 @@ public class MessageConsumer {
             }
 
             // TODO высылать только сокетам, которые слушают чат
-            kafkaTemplate.send("response.message.getByTripId", om.writeValueAsString(messageDtos));
+            kafkaTemplate.send("response.data.getByTripId", om.writeValueAsString(messageDtos));
         }
         catch (Exception e) {
             throw new ServerException(e);

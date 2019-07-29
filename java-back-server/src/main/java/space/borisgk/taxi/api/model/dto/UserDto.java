@@ -1,6 +1,13 @@
 package space.borisgk.taxi.api.model.dto;
 
 import lombok.*;
+import space.borisgk.taxi.api.model.entity.AuthServiceData;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 @Builder
 @Setter
@@ -8,7 +15,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-    private Integer id, vkId;
+    private Integer id;
+
     private String firstName, lastName;
-    private String photoUrl;
+    private String avatarUrl;
+    private List<AuthServiceData> authServiceDatas;
 }

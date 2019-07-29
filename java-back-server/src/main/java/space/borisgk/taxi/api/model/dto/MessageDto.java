@@ -3,6 +3,8 @@ package space.borisgk.taxi.api.model.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import space.borisgk.taxi.api.model.MessageStatus;
+import space.borisgk.taxi.api.model.MessageType;
 import space.borisgk.taxi.api.model.entity.Trip;
 import space.borisgk.taxi.api.model.entity.User;
 
@@ -17,6 +19,11 @@ public class MessageDto {
 
     private Integer userId;
     private Integer tripId;
-    private String message;
+    /**
+     * base64 data
+     */
+    private String data;
     private Date date;
+    private MessageStatus status;
+    private MessageType type;
 }

@@ -33,7 +33,8 @@ public class TripConsumer {
 
     @KafkaListener(topics = "request.trip.create", groupId = "server-java")
     public void tripCreate(String payload) throws ServerException {
-        try { logger.info("Receive payload:");
+        try {
+            logger.info("Receive payload:");
             logger.info(payload);
             TripDto tripDto = null;
             tripDto = om.readValue(payload, TripDto.class);

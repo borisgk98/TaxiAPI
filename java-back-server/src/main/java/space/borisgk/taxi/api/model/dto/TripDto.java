@@ -4,6 +4,10 @@ import lombok.*;
 import space.borisgk.taxi.api.model.TripStatus;
 import space.borisgk.taxi.api.model.entity.User;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import java.util.Date;
 import java.util.List;
 
@@ -16,9 +20,8 @@ public class TripDto {
     private Integer id;
 
     private Date date;
-    private Double fromLat, toLat, fromLong, toLong;
+    private Double latFrom, latTo, longFrom, longTo;
     private TripStatus status= TripStatus.ACTIVE;
-    private String toString;
-
+    private String addressTo, addressFrom;
     private List<User> users;
 }
