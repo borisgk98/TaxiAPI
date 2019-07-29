@@ -1,6 +1,7 @@
 package space.borisgk.taxi.api.model.entity;
 
 import lombok.*;
+import space.borisgk.taxi.api.model.AuthService;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,5 +21,5 @@ public class AuthServiceData {
     private Integer id;
 
     private AuthService authService;
-    private String authToken;
+    private String authServiceUserId;
 }

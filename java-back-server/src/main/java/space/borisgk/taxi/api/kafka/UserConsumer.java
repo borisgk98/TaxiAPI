@@ -9,10 +9,14 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import space.borisgk.taxi.api.exception.ServerException;
+import space.borisgk.taxi.api.model.AuthService;
 import space.borisgk.taxi.api.model.dto.UserDto;
+import space.borisgk.taxi.api.model.entity.AuthServiceData;
 import space.borisgk.taxi.api.model.entity.User;
 import space.borisgk.taxi.api.service.UserService;
 import space.borisgk.taxi.api.tool.Converter;
+
+import java.util.Optional;
 
 @Component
 public class UserConsumer {
@@ -31,13 +35,17 @@ public class UserConsumer {
     @KafkaListener(topics = "request.user.data", groupId = "server-java")
     public void userData(String payload) throws ServerException {
         try {
-            logger.info("Receive payload:");
-            logger.info(payload);
             UserDto userDto = null;
             userDto = om.readValue(payload, UserDto.class);
             User user = null;
-            if (userDto.getVkId() != null) {
-                user = userService.getUserByVkId(userDto.getVkId());
+            if (userDto.getAuthServiceDatas() != null) {
+                for (AuthServiceData authServiceData : userDto.getAuthServiceDatas()) {
+                    Optional<User> optionalUser = userService.getUserByAuthServiceData(authServiceData);
+                    if (optionalUser.isPresent()) {
+                        user = optionalUser.get();
+                        break;
+                    }
+                }
             }
             if (user == null) {
                 user = userService.saveUser(mapper.map(userDto, User.class));

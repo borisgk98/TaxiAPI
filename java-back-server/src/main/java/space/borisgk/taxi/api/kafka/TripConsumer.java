@@ -34,8 +34,6 @@ public class TripConsumer {
     @KafkaListener(topics = "request.trip.create", groupId = "server-java")
     public void tripCreate(String payload) throws ServerException {
         try {
-            logger.info("Receive payload:");
-            logger.info(payload);
             TripDto tripDto = null;
             tripDto = om.readValue(payload, TripDto.class);
             Trip trip = tripService.saveTrip(mapper.map(tripDto, Trip.class));
@@ -50,8 +48,6 @@ public class TripConsumer {
     @KafkaListener(topics = "request.trip.search", groupId = "server-java")
     public void tripSearch(String payload) throws ServerException  {
         try {
-            logger.info("Receive payload:");
-            logger.info(payload);
             List<Trip> trips = tripService.getAll();
             List<TripDto> tripDtos = mapper.map(trips, List.class);
             kafkaTemplate.send("response.trip.search", om.writeValueAsString(tripDtos));
