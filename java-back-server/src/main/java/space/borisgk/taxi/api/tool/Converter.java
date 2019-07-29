@@ -41,7 +41,7 @@ public class Converter {
                                     try {
                                         if (setterType.isEnum() && getterType.isEnum()) {
                                             Method constructor = setterType.getMethod("fromValue", String.class);
-                                            Method toString = getterType.getMethod("toString");
+                                            Method toString = getterType.getMethod("addressTo");
                                             setter.invoke(result, constructor.invoke(null, toString.invoke(getter.invoke(o))));
                                             break label;
                                         }

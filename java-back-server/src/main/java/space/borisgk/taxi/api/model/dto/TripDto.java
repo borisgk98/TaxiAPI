@@ -1,9 +1,9 @@
 package space.borisgk.taxi.api.model.dto;
 
 import lombok.*;
+import space.borisgk.taxi.api.model.TripStatus;
 import space.borisgk.taxi.api.model.entity.User;
 
-import javax.persistence.ManyToMany;
 import java.util.Date;
 import java.util.List;
 

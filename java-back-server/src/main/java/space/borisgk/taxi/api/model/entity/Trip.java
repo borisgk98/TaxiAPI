@@ -1,7 +1,7 @@
 package space.borisgk.taxi.api.model.entity;
 
 import lombok.*;
-import space.borisgk.taxi.api.model.dto.TripStatus;
+import space.borisgk.taxi.api.model.TripStatus;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -20,9 +20,9 @@ public class Trip {
     private Integer id;
 
     private Date date;
-    private Double fromLat, toLat, fromLong, toLong;
+    private Double latFrom, latTo, longFrom, longTo;
     private TripStatus status= TripStatus.ACTIVE;
-    private String toString;
+    private String addressTo, addressFrom;
 
     @ManyToMany
     private List<User> users;
