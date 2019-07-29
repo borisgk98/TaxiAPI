@@ -1,9 +1,8 @@
 package space.borisgk.taxi.api.model.entity
 
-import lombok.*
-
 import javax.persistence.*
 
+@Entity
 class User {
 
     constructor(id: Int?) {
@@ -16,11 +15,6 @@ class User {
         set(id) {
             field = this.id
         }
-    @Column(unique = true)
-    var vkId: Int? = null
-        set(vkId) {
-            field = this.vkId
-        }
     var firstName: String? = null
         set(firstName) {
             field = this.firstName
@@ -29,8 +23,13 @@ class User {
         set(lastName) {
             field = this.lastName
         }
-    var photoUrl: String? = null
-        set(photoUrl) {
-            field = this.photoUrl
+    var avatarUrl: String? = null
+        set(avatarUrl) {
+            field = this.avatarUrl
+        }
+    @ManyToMany
+    var authServiceDatas: List<AuthServiceData>? = null
+        set (authServiceDatas) {
+            field = this.authServiceDatas
         }
 }
