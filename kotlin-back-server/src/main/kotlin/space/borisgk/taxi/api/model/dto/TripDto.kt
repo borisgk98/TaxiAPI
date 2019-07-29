@@ -6,11 +6,6 @@ import space.borisgk.taxi.api.model.entity.User
 import javax.persistence.ManyToMany
 import java.util.Date
 
-@Builder
-@Setter
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
 class TripDto {
     var id: Int? = null
         set(id) {

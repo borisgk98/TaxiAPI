@@ -2,11 +2,6 @@ package space.borisgk.taxi.api.model.dto
 
 import lombok.*
 
-@Builder
-@Setter
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
 class UserDto {
     var id: Int? = null
         set(id) {

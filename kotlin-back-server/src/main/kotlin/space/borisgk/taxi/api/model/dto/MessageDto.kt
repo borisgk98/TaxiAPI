@@ -9,9 +9,6 @@ import space.borisgk.taxi.api.model.entity.User
 import javax.persistence.*
 import java.util.Date
 
-@Builder
-@Setter
-@Getter
 class MessageDto {
     var id: Int? = null
         set(id) {

@@ -4,13 +4,6 @@ import lombok.*
 
 import javax.persistence.*
 
-@Entity
-@Setter
-@Getter
-@Table(name = "taxi_user")
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 class User {
 
     constructor(id: Int?) {

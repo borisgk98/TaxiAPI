@@ -6,12 +6,6 @@ import space.borisgk.taxi.api.model.dto.TripStatus
 import javax.persistence.*
 import java.util.Date
 
-@Entity
-@Setter
-@Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 class Trip {
     constructor(id: Int?) {
         this.id = id
