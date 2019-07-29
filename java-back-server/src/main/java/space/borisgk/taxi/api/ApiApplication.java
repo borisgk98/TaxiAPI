@@ -10,16 +10,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@Configuration
 public class ApiApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ApiApplication.class, args);
-    }
-
-    @Bean
-    public Mapper dozenBeanMapper() {
-        return DozerBeanMapperBuilder.buildDefault();
     }
 
 }

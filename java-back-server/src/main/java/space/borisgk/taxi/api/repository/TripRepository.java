@@ -11,8 +11,8 @@ import java.util.List;
 
 @Repository
 public interface TripRepository extends JpaRepository<Trip, Integer> {
-    @Query("select t from Trip t where t.getLatTo < toLat")
-    List<Trip> search(Date date, Double fromLat, Double toLat, Double fromLong, Double toLong, Double deltaTime);
+//    @Query("select t from Trip t where t.getLatTo < toLat")
+//    List<Trip> search(Date date, Double latFrom, Double latTo, Double longTo, Double toLong, Double deltaTime);
 
     List<Trip> findByStatus(TripStatus status);
 }
