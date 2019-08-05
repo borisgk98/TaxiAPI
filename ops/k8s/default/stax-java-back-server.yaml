@@ -1,33 +1,33 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: taxi-js-front-server-d
+  name: stax-java-back-server-d
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: taxi-js-front-server
+        app: stax-java-back-server
     spec:
       terminationGracePeriodSeconds: 10
       containers:
-      - name: taxi-js-front-server
-        image: gcr.io/rich-sprite-242414/taxi-js-front-server:latest
+      - name: stax-java-back-server
+        image: borisgk98/stax-java-back-server
         ports:
         - containerPort: 3000
         env:
-        - name: KAFKA_SERVER
+        - name: spring.kafka.bootstrap-servers
           value: kafka-taxi:9092
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: taxi-js-front-server-lb
+  name: stax-java-back-server-lb
   labels:
-    app: taxi-js-front-server
+    app: stax-java-back-server
 spec:
   selector:
-    app: taxi-js-front-server
+    app: stax-java-back-server
   ports:
     - name: api
       protocol: TCP
@@ -38,13 +38,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: taxi-js-front-server-cip
+  name: stax-java-back-server-cip
   labels:
-    app: taxi-js-front-server
-    monitoring: taxi-js-front-server-monitor
+    app: stax-java-back-server
+    monitoring: stax-java-back-server-monitor
 spec:
   selector:
-    app: taxi-js-front-server
+    app: stax-java-back-server
   ports:
     - name: api
       protocol: TCP

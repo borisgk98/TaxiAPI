@@ -1,18 +1,18 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: taxi-js-front-server-d
+  name: stax-nodejs-front-server-d
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: taxi-js-front-server
+        app: stax-nodejs-front-server
     spec:
       terminationGracePeriodSeconds: 10
       containers:
-      - name: taxi-js-front-server
-        image: gcr.io/rich-sprite-242414/taxi-js-front-server
+      - name: stax-nodejs-front-server
+        image: borisgk98/stax-nodejs-front-server
         ports:
         - containerPort: 3000
         env:
@@ -22,12 +22,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: taxi-js-front-server-lb
+  name: stax-nodejs-front-server-lb
   labels:
-    app: taxi-js-front-server
+    app: stax-nodejs-front-server
 spec:
   selector:
-    app: taxi-js-front-server
+    app: stax-nodejs-front-server
   ports:
     - name: api
       protocol: TCP
@@ -38,13 +38,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: taxi-js-front-server-cip
+  name: stax-nodejs-front-server-cip
   labels:
-    app: taxi-js-front-server
-    monitoring: taxi-js-front-server-monitor
+    app: stax-nodejs-front-server
+    monitoring: stax-nodejs-front-server-monitor
 spec:
   selector:
-    app: taxi-js-front-server
+    app: stax-nodejs-front-server
   ports:
     - name: api
       protocol: TCP
