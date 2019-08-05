@@ -38,20 +38,20 @@ public class UserConsumer {
             UserDto userDto = null;
             userDto = om.readValue(payload, UserDto.class);
             User user = null;
-            if (userDto.getAuthServiceDatas() != null) {
-                for (AuthServiceData authServiceData : userDto.getAuthServiceDatas()) {
-                    Optional<User> optionalUser = userService.getUserByAuthServiceData(authServiceData);
-                    if (optionalUser.isPresent()) {
-                        user = optionalUser.get();
-                        break;
-                    }
-                }
-            }
-            if (user == null) {
-                user = userService.saveUser(mapper.map(userDto, User.class));
-            }
-            String res = user.getId().toString();
-            kafkaTemplate.send("response.user.data", res);
+//            if (userDto.getAuthServicesData() != null) {
+//                for (AuthServiceData authServiceData : userDto.getAuthServicesData()) {
+//                    Optional<User> optionalUser = userService.getUserByAuthServiceData(authServiceData);
+//                    if (optionalUser.isPresent()) {
+//                        user = optionalUser.get();
+//                        break;
+//                    }
+//                }
+//            }
+//            if (user == null) {
+//                user = userService.saveUser(mapper.map(userDto, User.class));
+//            }
+//            String res = user.getId().toString();
+            kafkaTemplate.send("response.user.data", payload);
         }
         catch (Exception e) {
             throw new ServerException(e);

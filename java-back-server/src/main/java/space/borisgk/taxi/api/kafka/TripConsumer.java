@@ -50,7 +50,8 @@ public class TripConsumer {
         try {
             List<Trip> trips = tripService.getAll();
             List<TripDto> tripDtos = mapper.map(trips, List.class);
-            kafkaTemplate.send("response.trip.search", om.writeValueAsString(tripDtos));
+            String result = om.writeValueAsString(tripDtos);
+            kafkaTemplate.send("response.trip.search", result);
         }
         catch (Exception e) {
             throw new ServerException(e);

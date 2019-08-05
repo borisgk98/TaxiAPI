@@ -73,10 +73,12 @@ async function startConsumer() {
         await consumer.subscribe({ topic: name, fromBeginning: false });
     });
     await consumer.subscribe({ topic: 'error', fromBeginning: false });
+    await consumer.subscribe({ topic: 'response.test', fromBeginning: false });
 
     await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
-            socket.emit(topic, new String(message.value));
+            const ans = new String(message.value);
+            socket.emit(topic, ans);
         },
     })
 }

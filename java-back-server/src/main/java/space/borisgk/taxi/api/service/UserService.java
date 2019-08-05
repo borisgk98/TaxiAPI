@@ -21,7 +21,7 @@ public class UserService {
     public Optional<User> getUser(Integer userId) {
         return Optional.ofNullable(userRepository.getOne(userId));
     }
-    public Optional<User> getUserByAuthServiceData(AuthServiceData data) {
-        return Optional.ofNullable(userRepository.getUserByAuthServiceData(data.getAuthServiceUserId(), data.getId()));
-    }
+//    public Optional<User> getUserByAuthServiceData(AuthServiceData data) {
+//        return Optional.ofNullable(userRepository.getUserByAuthServiceData(data.getAuthServiceUserId(), data.getId()));
+//    }
 }

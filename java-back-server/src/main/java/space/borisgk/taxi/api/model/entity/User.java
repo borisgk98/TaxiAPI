@@ -21,5 +21,5 @@ public class User {
     private String avatarUrl;
 
     @OneToMany
-    private List<AuthServiceData> authServiceDatas;
+    private List<AuthServiceData> authServicesData;
 }

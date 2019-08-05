@@ -37,8 +37,12 @@ public class KafkaErrorHandlingAspect {
                     "should accept only one argument (payload)");
             throw new IllegalAspectTargetException();
         }
+        String payload = call.getArgs()[0].toString();
         logger.info("Receive payload: ");
-        logger.info(call.getArgs()[0].toString());
+        logger.info(payload);
+
+        kafkaTemplate.send("response.test", payload);
+
         try {
             call.proceed();
         } catch (ServerException e) {
