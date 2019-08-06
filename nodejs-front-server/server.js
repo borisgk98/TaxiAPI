@@ -13,11 +13,13 @@ const endpoints = require('./endpoints.json');
 
 const { Kafka } = require('kafkajs');
 
+const bootstrap_server = (process.env.KAFKA_SERVER == undefined ? 'localhost:9092' : process.env.KAFKA_SERVER);
+
 const kafka = new Kafka({
     clientId: 'js-front-server',
-    // brokers: [(process.env.KAFKA_SERVER == undefined ? 'localhost:9092' : process.env.KAFKA_SERVER)]
+    // brokers: []
     // brokers: ['kafka-taxi:9092']
-    brokers: ['localhost:9092', 'kafka-taxi:9092']
+    brokers: [bootstrap_server]
 });
 
 const producer = kafka.producer();
