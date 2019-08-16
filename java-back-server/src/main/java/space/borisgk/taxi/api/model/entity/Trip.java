@@ -24,6 +24,6 @@ public class Trip {
     private TripStatus status= TripStatus.ACTIVE;
     private String addressTo, addressFrom;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<User> users;
 }

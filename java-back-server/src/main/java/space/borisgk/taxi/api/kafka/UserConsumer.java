@@ -48,10 +48,10 @@ public class UserConsumer {
 //                }
 //            }
 //            if (user == null) {
-//                user = userService.saveUser(mapper.map(userDto, User.class));
+            user = userService.saveUser(mapper.map(userDto, User.class));
 //            }
-//            String res = user.getId().toString();
-            kafkaTemplate.send("response.user.data", payload);
+            String res = user.getId().toString();
+            kafkaTemplate.send("response.user.data", res);
         }
         catch (Exception e) {
             throw new ServerException(e);

@@ -16,6 +16,7 @@ public class TripService {
     private TripRepository tripRepository;
 
     public Trip saveTrip(Trip trip) {
+
         return tripRepository.saveAndFlush(trip);
     }
 
