@@ -23,5 +23,5 @@ public class TripDto {
     private Double latFrom, latTo, longFrom, longTo;
     private TripStatus status= TripStatus.ACTIVE;
     private String addressTo, addressFrom;
-    private List<User> users;
+    private List<UserDto> users;
 }

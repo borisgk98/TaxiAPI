@@ -15,10 +15,10 @@ import java.util.Date;
 @Setter
 @Getter
 public class MessageDto {
-    private Integer id;
+    private String id;
 
-    private Integer userId;
-    private Integer tripId;
+    private String userId;
+    private String tripId;
     /**
      * base64 data
      */

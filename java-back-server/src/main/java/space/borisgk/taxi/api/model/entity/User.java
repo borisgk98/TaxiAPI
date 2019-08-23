@@ -22,5 +22,6 @@ public class User {
     private String avatarUrl;
 
     @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "taxi_user_auth_service_data")
     private Set<AuthServiceData> authServicesData;
 }

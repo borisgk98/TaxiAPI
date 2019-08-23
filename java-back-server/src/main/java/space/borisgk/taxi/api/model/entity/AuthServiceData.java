@@ -3,10 +3,7 @@ package space.borisgk.taxi.api.model.entity;
 import lombok.*;
 import space.borisgk.taxi.api.model.AuthService;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Setter
@@ -14,6 +11,7 @@ import javax.persistence.Id;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "auth_service_data")
 public class AuthServiceData {
 
     @Id

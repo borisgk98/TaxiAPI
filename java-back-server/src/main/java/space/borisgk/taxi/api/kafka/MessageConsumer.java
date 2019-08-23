@@ -41,8 +41,8 @@ public class MessageConsumer {
 
             MessageDto messageDto = om.readValue(payload, MessageDto.class);
             Message message = mapper.map(messageDto, Message.class);
-            message.setUser(User.builder().id(messageDto.getUserId()).build());
-            message.setTrip(Trip.builder().id(messageDto.getTripId()).build());
+            message.setUser(User.builder().id(Integer.parseInt(messageDto.getUserId())).build());
+            message.setTrip(Trip.builder().id(Integer.parseInt(messageDto.getTripId())).build());
             message = messageService.saveMessage(message);
             messageDto = mapper.map(message, MessageDto.class);
 
@@ -65,8 +65,8 @@ public class MessageConsumer {
             List<Message> messages = messageService.getAllByTripId(tripId);
             List<MessageDto> messageDtos = mapper.map(messages, List.class);
             for (int i = 0; i < messageDtos.size(); i++) {
-                messageDtos.get(i).setUserId(messages.get(i).getUser().getId());
-                messageDtos.get(i).setTripId(messages.get(i).getTrip().getId());
+                messageDtos.get(i).setUserId(messages.get(i).getUser().getId().toString());
+                messageDtos.get(i).setTripId(messages.get(i).getTrip().getId().toString());
             }
 
             // TODO высылать только сокетам, которые слушают чат

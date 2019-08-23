@@ -14,6 +14,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "trip")
 public class Trip {
 
     @Id
@@ -26,5 +27,6 @@ public class Trip {
     private String addressTo, addressFrom;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "trip_users")
     private Set<User> users;
 }

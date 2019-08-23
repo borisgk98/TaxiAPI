@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.List;
+import java.util.Map;
 
 @Builder
 @Setter
@@ -15,9 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-    private Integer id;
+    private String id;
 
     private String firstName, lastName;
     private String avatarUrl;
-    private List<AuthServiceData> authServiceDatas;
+    private Map<String, String> socialIds;
 }

@@ -15,6 +15,7 @@ import java.util.Date;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "message")
 public class Message {
 
     @Id
