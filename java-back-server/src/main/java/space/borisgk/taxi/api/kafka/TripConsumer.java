@@ -10,12 +10,12 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import space.borisgk.taxi.api.exception.ServerException;
 import space.borisgk.taxi.api.model.dto.TripDto;
-import space.borisgk.taxi.api.model.dto.UserDto;
+import space.borisgk.taxi.api.model.dto.TripAndUserRequest;
 import space.borisgk.taxi.api.model.entity.Trip;
 import space.borisgk.taxi.api.service.TripService;
-import space.borisgk.taxi.api.tool.Converter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class TripConsumer {
@@ -49,9 +49,24 @@ public class TripConsumer {
     public void tripSearch(String payload) throws ServerException  {
         try {
             List<Trip> trips = tripService.getAll();
-            List<TripDto> tripDtos = mapper.map(trips, List.class);
+            List<TripDto> tripDtos = trips.stream().map(x -> mapper.map(x, TripDto.class)).collect(Collectors.toList());
             String result = om.writeValueAsString(tripDtos);
             kafkaTemplate.send("response.trip.search", result);
+        }
+        catch (Exception e) {
+            throw new ServerException(e);
+        }
+    }
+
+    @KafkaListener(topics = "request.trip.join", groupId = "server-java")
+    public void tripJoin(String payload) throws ServerException  {
+        try {
+            TripAndUserRequest tripJoinRequest = om.readValue(payload, TripAndUserRequest.class);
+            Trip trip = tripService.addUserToTrip(Integer.parseInt(tripJoinRequest.getTripId()),
+                    Integer.parseInt(tripJoinRequest.getUserId()));
+            TripDto tripDto = mapper.map(trip, TripDto.class);
+            String result = "ok";
+            kafkaTemplate.send("response.trip.join", result);
         }
         catch (Exception e) {
             throw new ServerException(e);

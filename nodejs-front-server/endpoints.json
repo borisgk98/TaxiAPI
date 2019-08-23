@@ -3,5 +3,6 @@
   "user.get",
   "trip.create",
   "trip.search",
-  "message.create"
+  "message.create",
+  "trip.join"
 ]

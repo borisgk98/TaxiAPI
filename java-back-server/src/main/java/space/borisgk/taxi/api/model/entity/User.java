@@ -20,6 +20,6 @@ public class User {
     private String firstName, lastName;
     private String avatarUrl;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<AuthServiceData> authServicesData;
 }

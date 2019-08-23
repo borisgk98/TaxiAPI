@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TripDto {
-    private Integer id;
+    private String id;
 
     private Date date;
     private Double latFrom, latTo, longFrom, longTo;
