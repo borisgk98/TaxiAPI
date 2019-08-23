@@ -6,6 +6,7 @@ import space.borisgk.taxi.api.model.TripStatus;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -25,5 +26,5 @@ public class Trip {
     private String addressTo, addressFrom;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private List<User> users;
+    private Set<User> users;
 }

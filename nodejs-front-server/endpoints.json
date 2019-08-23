@@ -4,5 +4,6 @@
   "trip.create",
   "trip.search",
   "message.create",
-  "trip.join"
+  "trip.join",
+  "trip.leave"
 ]

@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -21,5 +22,5 @@ public class User {
     private String avatarUrl;
 
     @OneToMany(fetch = FetchType.EAGER)
-    private List<AuthServiceData> authServicesData;
+    private Set<AuthServiceData> authServicesData;
 }
