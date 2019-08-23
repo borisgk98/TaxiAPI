@@ -21,7 +21,7 @@ public class User {
     private String firstName, lastName;
     private String avatarUrl;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "taxi_user_auth_service_data")
     private Set<AuthServiceData> authServicesData;
 }

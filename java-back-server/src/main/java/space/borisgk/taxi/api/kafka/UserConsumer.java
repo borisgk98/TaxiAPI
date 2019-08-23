@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import space.borisgk.taxi.api.converter.Converter;
 import space.borisgk.taxi.api.exception.ServerException;
 import space.borisgk.taxi.api.model.AuthService;
 import space.borisgk.taxi.api.model.dto.UserDto;
 import space.borisgk.taxi.api.model.entity.AuthServiceData;
 import space.borisgk.taxi.api.model.entity.User;
 import space.borisgk.taxi.api.service.UserService;
-import space.borisgk.taxi.api.tool.Converter;
 
 import java.util.Optional;
 
@@ -31,13 +31,17 @@ public class UserConsumer {
     private UserService userService;
     @Autowired
     private Mapper mapper;
+    @Autowired
+    private Converter<User, UserDto> userUserDtoConverter;
+    @Autowired
+    private Converter<UserDto, User> userDtoUserConverter;
 
     @KafkaListener(topics = "request.user.data", groupId = "server-java")
     public void userData(String payload) throws ServerException {
         try {
             UserDto userDto = null;
             userDto = om.readValue(payload, UserDto.class);
-            User user = null;
+            User user = userDtoUserConverter.map(userDto);
 //            if (userDto.getAuthServicesData() != null) {
 //                for (AuthServiceData authServiceData : userDto.getAuthServicesData()) {
 //                    Optional<User> optionalUser = userService.getUserByAuthServiceData(authServiceData);
@@ -48,7 +52,7 @@ public class UserConsumer {
 //                }
 //            }
 //            if (user == null) {
-            user = userService.saveUser(mapper.map(userDto, User.class));
+            user = userService.saveUser(user);
 //            }
             String res = user.getId().toString();
             kafkaTemplate.send("response.user.data", res);
@@ -62,12 +66,5 @@ public class UserConsumer {
     public void userGet(String payload) throws ServerException  {
         logger.info("Receive payload:");
         logger.info(payload);
-//        UserDto userDto = null;
-//        try {
-//            userDto = om.readValue(payload, UserDto.class);
-//        }
-//        catch (Exception e) {
-//            logger.error("Error while deserialize user object from payload");
-//        }
     }
 }
