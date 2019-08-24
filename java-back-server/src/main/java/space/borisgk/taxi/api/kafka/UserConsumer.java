@@ -47,7 +47,7 @@ public class UserConsumer {
             if (userOptional.isPresent()) {
                 user = userOptional.get();
             }
-            if (user == null) {
+            else {
                 user = userService.saveUser(user);
             }
             String res = user.getId().toString();
