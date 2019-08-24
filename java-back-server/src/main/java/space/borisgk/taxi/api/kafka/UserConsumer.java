@@ -36,24 +36,20 @@ public class UserConsumer {
     @Autowired
     private Converter<UserDto, User> userDtoUserConverter;
 
+    // TODO обработка отсутсвтующего socialIds
     @KafkaListener(topics = "request.user.data", groupId = "server-java")
     public void userData(String payload) throws ServerException {
         try {
             UserDto userDto = null;
             userDto = om.readValue(payload, UserDto.class);
             User user = userDtoUserConverter.map(userDto);
-//            if (userDto.getAuthServicesData() != null) {
-//                for (AuthServiceData authServiceData : userDto.getAuthServicesData()) {
-//                    Optional<User> optionalUser = userService.getUserByAuthServiceData(authServiceData);
-//                    if (optionalUser.isPresent()) {
-//                        user = optionalUser.get();
-//                        break;
-//                    }
-//                }
-//            }
-//            if (user == null) {
-            user = userService.saveUser(user);
-//            }
+            Optional<User> userOptional = userService.getUserByAuthServiceData(user.getAuthServicesData());
+            if (userOptional.isPresent()) {
+                user = userOptional.get();
+            }
+            if (user == null) {
+                user = userService.saveUser(user);
+            }
             String res = user.getId().toString();
             kafkaTemplate.send("response.user.data", res);
         }

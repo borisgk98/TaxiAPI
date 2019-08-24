@@ -9,6 +9,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import space.borisgk.taxi.api.exception.IllegalAspectTargetException;
@@ -32,13 +33,17 @@ public class KafkaErrorHandlingAspect {
 
     @Around("pointcut()")
     private void aroundAdvise(ProceedingJoinPoint call) throws Throwable{
+        MethodSignature signature = (MethodSignature) call.getSignature();
+        Method method = signature.getMethod();
+        String[] topics = method.getAnnotation(KafkaListener.class).topics();
+
         if (call.getArgs().length != 1) {
-            logger.error("Illegal aspect target: method was annotated with @KafkaListener " +
-                    "should accept only one argument (payload)");
+            logger.error("[{}] Illegal aspect target: method was annotated with @KafkaListener " +
+                    "should accept only one argument (payload)", topics);
             throw new IllegalAspectTargetException();
         }
         String payload = call.getArgs()[0].toString();
-        logger.info("Receive payload: ");
+        logger.info("[{}] Receive payload: ", topics);
         logger.info(payload);
 
         kafkaTemplate.send("response.test", payload);
@@ -46,10 +51,8 @@ public class KafkaErrorHandlingAspect {
         try {
             call.proceed();
         } catch (ServerException e) {
-            MethodSignature signature = (MethodSignature) call.getSignature();
-            Method method = signature.getMethod();
-            logger.error("Error while call method: " + method.getDeclaringClass() + "." + method.getName());
-            logger.error(e.getMessage());
+            logger.error("[{}] Error while call method: " + method.getDeclaringClass() + "." + method.getName(), topics);
+            e.printStackTrace();
             try {
                 kafkaTemplate.send("error", e.getMessage());
             } catch (Exception e2) {
