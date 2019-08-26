@@ -24,7 +24,7 @@ public class UserDtoToUserConverter implements Converter<UserDto, User> {
                 .map(x -> AuthServiceData
                         .builder()
                         .authService(AuthService.valueOf(x.getKey()))
-                        .authServiceUserId(x.getValue()).build()).collect(Collectors.toSet()));
+                        .socialId(x.getValue()).build()).collect(Collectors.toSet()));
         return user;
     }
 }

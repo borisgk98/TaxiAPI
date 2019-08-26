@@ -12,6 +12,7 @@ import space.borisgk.taxi.api.converter.Converter;
 import space.borisgk.taxi.api.exception.ServerException;
 import space.borisgk.taxi.api.model.AuthService;
 import space.borisgk.taxi.api.model.dto.UserDto;
+import space.borisgk.taxi.api.model.dto.UserUpdateFriendsRequest;
 import space.borisgk.taxi.api.model.entity.AuthServiceData;
 import space.borisgk.taxi.api.model.entity.User;
 import space.borisgk.taxi.api.service.UserService;
@@ -62,5 +63,22 @@ public class UserConsumer {
     public void userGet(String payload) throws ServerException  {
         logger.info("Receive payload:");
         logger.info(payload);
+    }
+
+    // TODO вынести groupId и topics в кофигурацию или final static поля
+    @KafkaListener(topics = "request.user.update.friends", groupId = "server-java")
+    public void updateFriends(String payload) throws ServerException {
+        try {
+            UserUpdateFriendsRequest userUpdateFriendsRequest = om.readValue(payload, UserUpdateFriendsRequest.class);
+            userService.updateFriends(
+                    Long.parseLong(userUpdateFriendsRequest.getUserId()),
+                    userUpdateFriendsRequest.getAuthServiceData(),
+                    userUpdateFriendsRequest.getNewFriendsSocialIds()
+            );
+            kafkaTemplate.send("response.user.update.friends", "ok");
+        }
+        catch (Exception e) {
+            throw new ServerException(e);
+        }
     }
 }

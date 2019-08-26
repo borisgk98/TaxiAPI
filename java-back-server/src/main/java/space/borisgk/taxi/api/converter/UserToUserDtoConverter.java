@@ -21,7 +21,7 @@ public class UserToUserDtoConverter implements Converter<User, UserDto> {
         UserDto userDto = mapper.map(user, UserDto.class);
         Map<String, String> socialIds = new HashMap<>();
         for (AuthServiceData authServiceData : user.getAuthServicesData()) {
-            socialIds.put(authServiceData.getAuthService().name(), authServiceData.getAuthServiceUserId());
+            socialIds.put(authServiceData.getAuthService().name(), authServiceData.getSocialId());
         }
         userDto.setSocialIds(socialIds);
         return userDto;
