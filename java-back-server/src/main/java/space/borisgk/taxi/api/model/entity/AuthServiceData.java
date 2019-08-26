@@ -21,12 +21,16 @@ public class AuthServiceData {
     private Integer id;
 
     private AuthService authService;
-    private String authServiceUserId;
+    @Column(name = "social_id")
+    private String socialId;
 
-    @Column(columnDefinition = "BIGINT COMMENT " +
+    @Column(
+            columnDefinition = "BIGINT COMMENT " +
             "'Hash for all user in this social network for user. " +
             "Compute as the sum modulo 2^64 of users\' ids." +
-            "This field should be interpreted as a UNSIGNED LONG.'")
+            "This field should be interpreted as a UNSIGNED LONG.'",
+            name = "friends_hash"
+    )
     @Range(min = 0)
     private Long friendsHash;
 }

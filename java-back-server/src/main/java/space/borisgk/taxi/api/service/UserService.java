@@ -38,7 +38,8 @@ public class UserService {
                 "join taxi_user_auth_service_data ud on u.id = ud.user_id " +
                 "join auth_service_data d on ud.auth_services_data_id = d.id where ");
         for (AuthServiceData data : authServiceData) {
-            queryString.append(String.format("(d.auth_service = %s and d.auth_service_user_id = '%s') or ", data.getAuthService().ordinal(), data.getAuthServiceUserId()));
+            queryString.append(String.format("(d.auth_service = %s and d.social_id = '%s') or ",
+                    data.getAuthService().ordinal(), data.getSocialId()));
         }
         queryString.delete(queryString.length() - 3, queryString.length());
         try {
