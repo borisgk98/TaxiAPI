@@ -24,4 +24,8 @@ public class User {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "taxi_user_auth_service_data")
     private Set<AuthServiceData> authServicesData;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "taxi_user_friends")
+    private Set<User> friends;
 }

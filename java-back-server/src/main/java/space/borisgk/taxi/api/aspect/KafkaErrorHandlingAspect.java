@@ -43,9 +43,8 @@ public class KafkaErrorHandlingAspect {
             throw new IllegalAspectTargetException();
         }
         String payload = call.getArgs()[0].toString();
-        logger.info("[{}] Receive payload: ", topics);
-        logger.info(payload);
-
+        logger.info("[{}] Receive payload: \n{}", topics, payload);
+        
         kafkaTemplate.send("response.test", payload);
 
         try {
