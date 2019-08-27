@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class UserToUserDtoConverter implements Converter<User, UserDto> {
+public class UserToUserDtoConverter implements IConverter<User, UserDto> {
 
     @Autowired
     private Mapper mapper;

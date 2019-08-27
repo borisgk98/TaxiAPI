@@ -3,7 +3,7 @@
 //import java.lang.reflect.Method;
 //import java.lang.reflect.Parameter;
 //
-//public class Converter {
+//public class IConverter {
 //    public static  <T, F> F convert(T o, Class<F> resultClass) {
 //        try {
 //            Class oc = o.getClass();

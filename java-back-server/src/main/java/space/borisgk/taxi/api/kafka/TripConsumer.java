@@ -37,7 +37,7 @@ public class TripConsumer {
         try {
             TripDto tripDto = null;
             tripDto = om.readValue(payload, TripDto.class);
-            Trip trip = tripService.saveTrip(mapper.map(tripDto, Trip.class));
+            Trip trip = tripService.create(mapper.map(tripDto, Trip.class));
             tripDto = mapper.map(trip, TripDto.class);
             kafkaTemplate.send("response.trip.create", om.writeValueAsString(tripDto));
         }

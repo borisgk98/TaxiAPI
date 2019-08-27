@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import space.borisgk.taxi.api.converter.Converter;
+import space.borisgk.taxi.api.converter.IConverter;
 import space.borisgk.taxi.api.exception.ServerException;
-import space.borisgk.taxi.api.model.AuthService;
 import space.borisgk.taxi.api.model.dto.UserDto;
 import space.borisgk.taxi.api.model.dto.UserUpdateFriendsRequest;
-import space.borisgk.taxi.api.model.entity.AuthServiceData;
 import space.borisgk.taxi.api.model.entity.User;
 import space.borisgk.taxi.api.service.UserService;
 
@@ -33,9 +31,9 @@ public class UserConsumer {
     @Autowired
     private Mapper mapper;
     @Autowired
-    private Converter<User, UserDto> userUserDtoConverter;
+    private IConverter<User, UserDto> userUserDtoConverter;
     @Autowired
-    private Converter<UserDto, User> userDtoUserConverter;
+    private IConverter<UserDto, User> userDtoUserConverter;
 
     // TODO обработка отсутсвтующего socialIds
     @KafkaListener(topics = "request.user.data", groupId = "server-java")
@@ -49,7 +47,7 @@ public class UserConsumer {
                 user = userOptional.get();
             }
             else {
-                user = userService.saveUser(user);
+                user = userService.create(user);
             }
             String res = user.getId().toString();
             kafkaTemplate.send("response.user.data", res);

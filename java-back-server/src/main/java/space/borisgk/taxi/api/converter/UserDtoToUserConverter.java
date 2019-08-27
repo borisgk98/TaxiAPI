@@ -11,7 +11,7 @@ import space.borisgk.taxi.api.model.entity.User;
 import java.util.stream.Collectors;
 
 @Component
-public class UserDtoToUserConverter implements Converter<UserDto, User> {
+public class UserDtoToUserConverter implements IConverter<UserDto, User> {
 
     @Autowired
     private Mapper mapper;

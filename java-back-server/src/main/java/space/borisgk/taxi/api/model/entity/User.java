@@ -1,6 +1,7 @@
 package space.borisgk.taxi.api.model.entity;
 
 import lombok.*;
+import space.borisgk.taxi.api.model.IEntity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User implements IEntity<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

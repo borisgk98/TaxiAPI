@@ -10,7 +10,7 @@ import java.util.Date;
 @Setter
 @Getter
 @Builder
-public class TripSearchRequest implements SearchRequest<Trip> {
+public class TripSearchRequest implements ISearchRequest<Trip> {
     private Date time;
     private Integer deltaTimeMin;
     private Double xcoord, ycoord, searchRadius;

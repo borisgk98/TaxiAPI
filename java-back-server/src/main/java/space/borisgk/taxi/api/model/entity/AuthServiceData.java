@@ -3,6 +3,7 @@ package space.borisgk.taxi.api.model.entity;
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
 import space.borisgk.taxi.api.model.AuthService;
+import space.borisgk.taxi.api.model.IEntity;
 
 import javax.persistence.*;
 import javax.validation.Constraint;
@@ -14,7 +15,7 @@ import javax.validation.Constraint;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "auth_service_data")
-public class AuthServiceData {
+public class AuthServiceData implements IEntity<Integer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

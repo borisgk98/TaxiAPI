@@ -1,23 +1,15 @@
 package space.borisgk.taxi.api.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import space.borisgk.taxi.api.model.entity.Message;
-import space.borisgk.taxi.api.repository.MessageRepository;
 
-import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
 
 @Service
-public class MessageService {
-
-    @Autowired
-    private MessageRepository messageRepository;
-
-    public Message saveMessage(Message message) {
-        return messageRepository.saveAndFlush(message);
-    }
-
-    public List<Message> getAllByTripId(Integer tripId) {
-        return messageRepository.getAllByTripId(tripId);
+public class MessageService extends AbstractCrudService<Message> {
+    public MessageService(JpaRepository<Message, Integer> repository, EntityManager em, CriteriaBuilder cb) {
+        super(repository, em, cb);
     }
 }

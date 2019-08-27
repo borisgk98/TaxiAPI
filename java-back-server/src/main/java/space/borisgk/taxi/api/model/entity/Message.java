@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import space.borisgk.taxi.api.model.IEntity;
 import space.borisgk.taxi.api.model.MessageStatus;
 import space.borisgk.taxi.api.model.MessageType;
 
@@ -16,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "message")
-public class Message {
+public class Message implements IEntity<Integer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
