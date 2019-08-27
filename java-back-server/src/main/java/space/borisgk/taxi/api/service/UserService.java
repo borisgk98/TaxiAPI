@@ -30,7 +30,7 @@ public class UserService extends AbstractCrudService<User> {
                 "join auth_service_data d on ud.auth_services_data_id = d.id where ");
         for (AuthServiceData data : authServiceData) {
             queryString.append(String.format("(d.auth_service = %s and d.social_id = '%s') or ",
-                    data.getAuthService().ordinal(), data.getSocialId()));
+                    data.getAuthService().getId(), data.getSocialId()));
         }
         queryString.delete(queryString.length() - 3, queryString.length());
         try {
@@ -41,7 +41,6 @@ public class UserService extends AbstractCrudService<User> {
         }
     }
 
-    // TODO обработка отсутвующего id у authServiceData
     @Transactional
     public void updateFriends(Integer userId, AuthServiceData authServiceData, Set<String> newFriendsSocialIds, Set<String> deletedFriendsSocialIds) throws ModelNotFound {
         if (!existById(userId)){
@@ -67,7 +66,7 @@ public class UserService extends AbstractCrudService<User> {
                     "    join auth_service_data d on ud.auth_service_data_id = d.id\n" +
                     "where d.auth_service = ?2 and d.social_id in ?3")
                     .setParameter(1, userId)
-                    .setParameter(2, authServiceData.getAuthService().ordinal() + 1)
+                    .setParameter(2, authServiceData.getAuthService().getId())
                     .setParameter(3, newFriendsSocialIds)
                     .executeUpdate();
         }
@@ -82,7 +81,8 @@ public class UserService extends AbstractCrudService<User> {
                     "    where d.auth_service = ?2 and d.social_id in ?3\n" +
                     ")")
                     .setParameter(1, userId)
-                    .setParameter(2, authServiceData.getAuthService().ordinal() + 1)
+                    // TODO Подумать над тем, как соотносить enum AuthService с объектом в бд
+                    .setParameter(2, authServiceData.getAuthService().getId())
                     .setParameter(3, deletedFriendsSocialIds)
                     .executeUpdate();
         }

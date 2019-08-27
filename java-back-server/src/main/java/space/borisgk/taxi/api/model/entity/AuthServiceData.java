@@ -2,11 +2,9 @@ package space.borisgk.taxi.api.model.entity;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
-import space.borisgk.taxi.api.model.AuthService;
 import space.borisgk.taxi.api.model.IEntity;
 
 import javax.persistence.*;
-import javax.validation.Constraint;
 
 @Entity
 @Setter
@@ -22,7 +20,8 @@ public class AuthServiceData implements IEntity<Integer> {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "auth_service")
+    @ManyToOne
+    @JoinColumn(name = "auth_service")
     private AuthService authService;
     @Column(name = "social_id")
     private String socialId;
