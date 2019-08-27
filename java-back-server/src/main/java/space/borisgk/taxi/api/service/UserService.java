@@ -17,12 +17,10 @@ import java.util.Set;
 
 @Service
 public class UserService extends AbstractCrudService<User> {
-    private ICrudService<User, Integer> userService;
     private ICrudService<AuthServiceData, Integer> authServiceDataService;
 
-    public UserService(JpaRepository<User, Integer> repository, EntityManager em, CriteriaBuilder cb, ICrudService<User, Integer> userService, ICrudService<AuthServiceData, Integer> authServiceDataService) {
+    public UserService(JpaRepository<User, Integer> repository, EntityManager em, CriteriaBuilder cb, ICrudService<AuthServiceData, Integer> authServiceDataService) {
         super(repository, em, cb);
-        this.userService = userService;
         this.authServiceDataService = authServiceDataService;
     }
 
@@ -45,8 +43,22 @@ public class UserService extends AbstractCrudService<User> {
 
     // TODO обработка отсутвующего id у authServiceData
     @Transactional
-    public void updateFriends(Long userId, AuthServiceData authServiceData, Set<String> newFriendsSocialIds) throws ModelNotFound {
-        authServiceDataService.update(authServiceData);
+    public void updateFriends(Integer userId, AuthServiceData authServiceData, Set<String> newFriendsSocialIds) throws ModelNotFound {
+        // Update AuthServiceData
+        CriteriaUpdate<AuthServiceData> updateAuthServiceData = cb.createCriteriaUpdate(AuthServiceData.class);
+        Root<AuthServiceData> authServiceDataRoot = updateAuthServiceData.from(AuthServiceData.class);
+        updateAuthServiceData.set("friendsHash", authServiceData.getFriendsHash());
+        updateAuthServiceData.where(cb.equal(authServiceDataRoot.get("id"), authServiceData.getId()));
+        em.createQuery(updateAuthServiceData).executeUpdate();
 
+        em.createNativeQuery("insert into taxi_user_friends\n" +
+                "select ?1 as user_id, u.id as friends_id from taxi_user u\n" +
+                "    join taxi_user_auth_service_data ud on u.id = ud.user_id\n" +
+                "    join auth_service_data d on ud.auth_service_data_id = d.id\n" +
+                "where d.auth_service = ?2 and d.social_id in ?3")
+                .setParameter(1, userId)
+                .setParameter(2, authServiceData.getAuthService().ordinal())
+                .setParameter(3, newFriendsSocialIds)
+                .executeUpdate();
     }
 }

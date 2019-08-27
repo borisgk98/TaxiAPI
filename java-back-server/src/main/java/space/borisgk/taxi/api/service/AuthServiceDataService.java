@@ -9,8 +9,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 
 @Service
 public class AuthServiceDataService extends AbstractCrudService<AuthServiceData> implements ICrudService<AuthServiceData, Integer> {
-
-    public AuthServiceDataService(JpaRepository<AuthServiceData, Integer> repository) {
-        super(repository);
+    public AuthServiceDataService(JpaRepository<AuthServiceData, Integer> repository, EntityManager em, CriteriaBuilder cb) {
+        super(repository, em, cb);
     }
 }

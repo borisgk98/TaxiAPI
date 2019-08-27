@@ -19,8 +19,10 @@ public class AuthServiceData implements IEntity<Integer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
+    @Column(name = "auth_service")
     private AuthService authService;
     @Column(name = "social_id")
     private String socialId;

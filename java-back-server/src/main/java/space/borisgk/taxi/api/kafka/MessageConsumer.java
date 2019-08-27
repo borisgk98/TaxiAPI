@@ -43,7 +43,7 @@ public class MessageConsumer {
             Message message = mapper.map(messageDto, Message.class);
             message.setUser(User.builder().id(Integer.parseInt(messageDto.getUserId())).build());
             message.setTrip(Trip.builder().id(Integer.parseInt(messageDto.getTripId())).build());
-            message = messageService.saveMessage(message);
+            message = messageService.create(message);
             messageDto = mapper.map(message, MessageDto.class);
 
             // TODO высылать только сокетам, которые слушают чат
@@ -54,26 +54,26 @@ public class MessageConsumer {
         }
     }
 
-    @KafkaListener(topics = "request.data.getByTripId", groupId = "server-java")
-    public void messageGetByTripId(String payload) throws ServerException {
-        try {
-            // TODO move to aspect
-            logger.info("Receive payload:");
-            logger.info(payload);
-
-            Integer tripId = Integer.parseInt(payload);
-            List<Message> messages = messageService.getAllByTripId(tripId);
-            List<MessageDto> messageDtos = mapper.map(messages, List.class);
-            for (int i = 0; i < messageDtos.size(); i++) {
-                messageDtos.get(i).setUserId(messages.get(i).getUser().getId().toString());
-                messageDtos.get(i).setTripId(messages.get(i).getTrip().getId().toString());
-            }
-
-            // TODO высылать только сокетам, которые слушают чат
-            kafkaTemplate.send("response.data.getByTripId", om.writeValueAsString(messageDtos));
-        }
-        catch (Exception e) {
-            throw new ServerException(e);
-        }
-    }
+//    @KafkaListener(topics = "request.data.getByTripId", groupId = "server-java")
+//    public void messageGetByTripId(String payload) throws ServerException {
+//        try {
+//            // TODO move to aspect
+//            logger.info("Receive payload:");
+//            logger.info(payload);
+//
+//            Integer tripId = Integer.parseInt(payload);
+//            List<Message> messages = messageService.getAllByTripId(tripId);
+//            List<MessageDto> messageDtos = mapper.map(messages, List.class);
+//            for (int i = 0; i < messageDtos.size(); i++) {
+//                messageDtos.get(i).setUserId(messages.get(i).getUser().getId().toString());
+//                messageDtos.get(i).setTripId(messages.get(i).getTrip().getId().toString());
+//            }
+//
+//            // TODO высылать только сокетам, которые слушают чат
+//            kafkaTemplate.send("response.data.getByTripId", om.writeValueAsString(messageDtos));
+//        }
+//        catch (Exception e) {
+//            throw new ServerException(e);
+//        }
+//    }
 }

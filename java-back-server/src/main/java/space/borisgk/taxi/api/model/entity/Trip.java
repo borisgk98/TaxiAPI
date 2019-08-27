@@ -20,14 +20,37 @@ public class Trip implements IEntity<Integer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
+    @Column(name = "date")
     private Date date;
-    private Double latFrom, latTo, longFrom, longTo;
+    @Column(name = "lat_from")
+    private Double latFrom;
+    @Column(name = "lat_to")
+    private Double latTo;
+    @Column(name = "long_from")
+    private Double longFrom;
+    @Column(name = "long_to")
+    private Double longTo;
+    @Column(name = "status")
     private TripStatus status= TripStatus.ACTIVE;
-    private String addressTo, addressFrom;
+    @Column(name = "address_to")
+    private String addressTo;
+    @Column(name = "address_from")
+    private String addressFrom;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "trip_users")
+    @JoinTable(
+            name = "trip_users",
+            joinColumns = @JoinColumn(
+                    name = "trip_id",
+                    referencedColumnName = "id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "user_id",
+                    referencedColumnName = "id"
+            )
+    )
     private Set<User> users;
 }

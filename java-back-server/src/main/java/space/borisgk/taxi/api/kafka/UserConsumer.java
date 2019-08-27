@@ -69,7 +69,7 @@ public class UserConsumer {
         try {
             UserUpdateFriendsRequest userUpdateFriendsRequest = om.readValue(payload, UserUpdateFriendsRequest.class);
             userService.updateFriends(
-                    Long.parseLong(userUpdateFriendsRequest.getUserId()),
+                    Integer.parseInt(userUpdateFriendsRequest.getUserId()),
                     userUpdateFriendsRequest.getAuthServiceData(),
                     userUpdateFriendsRequest.getNewFriendsSocialIds()
             );
