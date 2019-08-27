@@ -44,13 +44,22 @@ public class UserService extends AbstractCrudService<User> {
     // TODO обработка отсутвующего id у authServiceData
     @Transactional
     public void updateFriends(Integer userId, AuthServiceData authServiceData, Set<String> newFriendsSocialIds) throws ModelNotFound {
-        // Update AuthServiceData
-        CriteriaUpdate<AuthServiceData> updateAuthServiceData = cb.createCriteriaUpdate(AuthServiceData.class);
-        Root<AuthServiceData> authServiceDataRoot = updateAuthServiceData.from(AuthServiceData.class);
-        updateAuthServiceData.set("friendsHash", authServiceData.getFriendsHash());
-        updateAuthServiceData.where(cb.equal(authServiceDataRoot.get("id"), authServiceData.getId()));
-        em.createQuery(updateAuthServiceData).executeUpdate();
+        if (!existById(userId)){
+            throw new ModelNotFound();
+        }
 
+        // Update AuthServiceData
+        em.createNativeQuery("update auth_service_data set friends_hash = ?2 where id in (\n" +
+                "    select d.id from auth_service_data d\n" +
+                "    join taxi_user_auth_service_data on auth_service_data.id = taxi_user_auth_service_data.auth_service_data_id\n" +
+                "    join taxi_user tu on taxi_user_auth_service_data.user_id = tu.id\n" +
+                "    where tu.id = ?1\n" +
+                ")")
+                .setParameter(1, userId)
+                .setParameter(2, authServiceData.getFriendsHash())
+                .executeUpdate();
+
+        // Update friends for user
         em.createNativeQuery("insert into taxi_user_friends\n" +
                 "select ?1 as user_id, u.id as friends_id from taxi_user u\n" +
                 "    join taxi_user_auth_service_data ud on u.id = ud.user_id\n" +
