@@ -1,1 +1,1 @@
-{"userId": "1","authServiceData": {"id": 14,"authService": "VK","socialId": "153171206","friendsHash": 0},"newFriendsSocialIds": ["153171206"]}
+{"userId": "1","authServiceData": {"id": 14,"authService": "VK","socialId": "153171206","friendsHash": 0},"newFriendsSocialIds": [],"deletedFriendsSocialIds": ["153171206"]}

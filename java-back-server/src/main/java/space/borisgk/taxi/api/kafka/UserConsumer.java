@@ -30,10 +30,6 @@ public class UserConsumer {
     private UserService userService;
     @Autowired
     private Mapper mapper;
-    @Autowired
-    private IConverter<User, UserDto> userUserDtoConverter;
-    @Autowired
-    private IConverter<UserDto, User> userDtoUserConverter;
 
     // TODO обработка отсутсвтующего socialIds
     @KafkaListener(topics = "request.user.data", groupId = "server-java")
@@ -41,7 +37,7 @@ public class UserConsumer {
         try {
             UserDto userDto = null;
             userDto = om.readValue(payload, UserDto.class);
-            User user = userDtoUserConverter.map(userDto);
+            User user = mapper.map(userDto, User.class);
             Optional<User> userOptional = userService.getUserByAuthServiceData(user.getAuthServicesData());
             if (userOptional.isPresent()) {
                 user = userOptional.get();
@@ -71,7 +67,8 @@ public class UserConsumer {
             userService.updateFriends(
                     Integer.parseInt(userUpdateFriendsRequest.getUserId()),
                     userUpdateFriendsRequest.getAuthServiceData(),
-                    userUpdateFriendsRequest.getNewFriendsSocialIds()
+                    userUpdateFriendsRequest.getNewFriendsSocialIds(),
+                    userUpdateFriendsRequest.getDeletedFriendsSocialIds()
             );
             kafkaTemplate.send("response.user.update.friends", "ok");
         }

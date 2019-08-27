@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Builder
 @Setter
@@ -20,5 +21,5 @@ public class UserDto {
 
     private String firstName, lastName;
     private String avatarUrl;
-    private Map<String, String> socialIds;
+    private Set<AuthServiceData> authServicesData;
 }

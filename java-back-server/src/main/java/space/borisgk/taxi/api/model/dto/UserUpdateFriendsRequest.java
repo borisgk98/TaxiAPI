@@ -16,5 +16,6 @@ public class UserUpdateFriendsRequest {
     private String userId;
     private AuthServiceData authServiceData;
     private Set<String> newFriendsSocialIds;
+    private Set<String> deletedFriendsSocialIds;
 }
 
