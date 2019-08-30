@@ -1,5 +1,6 @@
 package space.borisgk.taxi.api.model.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.util.Date;
 @Builder
 @Setter
 @Getter
+@AllArgsConstructor
 public class MessageDto {
     private String id;
 

@@ -10,8 +10,11 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import space.borisgk.taxi.api.converter.IConverter;
 import space.borisgk.taxi.api.exception.ServerException;
+import space.borisgk.taxi.api.model.dto.AuthServiceDataDTO;
 import space.borisgk.taxi.api.model.dto.UserDto;
 import space.borisgk.taxi.api.model.dto.UserUpdateFriendsRequest;
+import space.borisgk.taxi.api.model.entity.AuthService;
+import space.borisgk.taxi.api.model.entity.AuthServiceData;
 import space.borisgk.taxi.api.model.entity.User;
 import space.borisgk.taxi.api.service.UserService;
 
@@ -30,6 +33,8 @@ public class UserConsumer {
     private UserService userService;
     @Autowired
     private Mapper mapper;
+    @Autowired
+    private IConverter<AuthServiceDataDTO, AuthServiceData> authServiceDataDTOAuthServiceDataConverter;
 
     // TODO обработка отсутсвтующего socialIds
     @KafkaListener(topics = "request.user.data", groupId = "server-java")
@@ -66,7 +71,7 @@ public class UserConsumer {
             UserUpdateFriendsRequest userUpdateFriendsRequest = om.readValue(payload, UserUpdateFriendsRequest.class);
             userService.updateFriends(
                     Integer.parseInt(userUpdateFriendsRequest.getUserId()),
-                    userUpdateFriendsRequest.getAuthServiceData(),
+                    authServiceDataDTOAuthServiceDataConverter.map(userUpdateFriendsRequest.getAuthServiceData()),
                     userUpdateFriendsRequest.getNewFriendsSocialIds(),
                     userUpdateFriendsRequest.getDeletedFriendsSocialIds()
             );

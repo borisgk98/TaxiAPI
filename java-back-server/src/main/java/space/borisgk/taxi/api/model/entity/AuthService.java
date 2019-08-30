@@ -21,4 +21,14 @@ public class AuthService {
 
     @Column(name = "name")
     private String name;
+
+    public static AuthService fromName(String name) {
+        switch (name) {
+            case "VK":
+                return VK;
+            case "FB":
+                return FB;
+        }
+        return null;
+    }
 }
