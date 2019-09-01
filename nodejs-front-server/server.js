@@ -17,8 +17,6 @@ const bootstrap_server = (process.env.KAFKA_SERVER == undefined ? 'localhost:909
 
 const kafka = new Kafka({
     clientId: 'js-front-server',
-    // brokers: []
-    // brokers: ['kafka-taxi:9092']
     brokers: [bootstrap_server]
 });
 
@@ -54,15 +52,6 @@ async function startProducer(){
                     await sendKafkaMess(name, data);
                 });
             });
-            // s.on('request.user.data', async data => {
-            //     await sendKafkaMess("request.user.data", data);
-            // });
-            // s.on('request.trip.search', async data => {
-            //     await sendKafkaMess("request.trip.search", data);
-            // });
-            // s.on('request.trip.create', async data => {
-            //     await sendKafkaMess("request.trip.create", data);
-            // });
         });
     server.listen(3000);
 }

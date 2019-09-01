@@ -35,14 +35,19 @@ public class UserConsumer {
     private Mapper mapper;
     @Autowired
     private IConverter<AuthServiceDataDTO, AuthServiceData> authServiceDataDTOAuthServiceDataConverter;
+    @Autowired
+    private IConverter<UserDto, User> userDtoUserConverter;
 
     // TODO обработка отсутсвтующего socialIds
+    // TODO обработка, если socialId == null
+    // TODO валидация запроса
+    // TODO маппинг юзера в json если отсутсвует hibernate session (возникает ожибка из за lazy initialization)
     @KafkaListener(topics = "request.user.data", groupId = "server-java")
     public void userData(String payload) throws ServerException {
         try {
             UserDto userDto = null;
             userDto = om.readValue(payload, UserDto.class);
-            User user = mapper.map(userDto, User.class);
+            User user = userDtoUserConverter.map(userDto);
             Optional<User> userOptional = userService.getUserByAuthServiceData(user.getAuthServicesData());
             if (userOptional.isPresent()) {
                 user = userOptional.get();

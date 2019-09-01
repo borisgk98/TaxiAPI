@@ -25,9 +25,12 @@ public class UserService extends AbstractCrudService<User> {
     }
 
     public Optional<User> getUserByAuthServiceData(Set<AuthServiceData> authServiceData) {
+        if (authServiceData == null || authServiceData.size() == 0) {
+            return Optional.empty();
+        }
         StringBuilder queryString = new StringBuilder("select * from taxi_user u " +
                 "join taxi_user_auth_service_data ud on u.id = ud.user_id " +
-                "join auth_service_data d on ud.auth_services_data_id = d.id where ");
+                "join auth_service_data d on ud.auth_service_data_id = d.id where ");
         for (AuthServiceData data : authServiceData) {
             queryString.append(String.format("(d.auth_service = %s and d.social_id = '%s') or ",
                     data.getAuthService().getId(), data.getSocialId()));

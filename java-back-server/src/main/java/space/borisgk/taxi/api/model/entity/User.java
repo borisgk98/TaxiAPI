@@ -1,5 +1,6 @@
 package space.borisgk.taxi.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import space.borisgk.taxi.api.model.IEntity;
 
@@ -53,5 +54,6 @@ public class User implements IEntity<Integer> {
                     referencedColumnName = "id"
             )
     )
+    @JsonIgnore
     private Set<User> friends;
 }
