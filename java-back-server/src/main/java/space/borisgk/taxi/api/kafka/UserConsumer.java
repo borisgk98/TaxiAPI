@@ -60,8 +60,14 @@ public class UserConsumer {
 
     @KafkaListener(topics = "request.user.get", groupId = "server-java")
     public void userGet(String payload) throws ServerException  {
-        logger.info("Receive payload:");
-        logger.info(payload);
+        try {
+            Integer id = Integer.parseInt(payload);
+            UserDto userDto = mapper.map(userService.read(id), UserDto.class);
+            kafkaTemplate.send(om.writeValueAsString(userDto), "response.user.get");
+        }
+        catch (Exception e) {
+            throw new ServerException(e);
+        }
     }
 
     // TODO вынести groupId и topics в кофигурацию или final static поля

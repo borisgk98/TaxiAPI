@@ -1,10 +1,12 @@
 package space.borisgk.taxi.api.service;
 
+import org.hibernate.query.NativeQuery;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import space.borisgk.taxi.api.exception.ModelNotFound;
 import space.borisgk.taxi.api.model.TripStatus;
+import space.borisgk.taxi.api.model.dto.TripSearchResult_Trip;
 import space.borisgk.taxi.api.model.entity.Trip;
 import space.borisgk.taxi.api.model.entity.User;
 import space.borisgk.taxi.api.repository.TripRepository;
@@ -51,4 +53,8 @@ public class TripService extends AbstractCrudService<Trip> {
         trip.setUsers(tripUsers);
         return update(trip);
     }
+
+//    public List<TripSearchResult_Trip> search() {
+//        em.createNativeQuery("").;
+//    }
 }
