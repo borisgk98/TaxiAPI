@@ -50,7 +50,7 @@ public class UserConsumer {
             else {
                 user = userService.create(user);
             }
-            String res = user.getId().toString();
+            String res = om.writeValueAsString(user);
             kafkaTemplate.send("response.user.data", res);
         }
         catch (Exception e) {
