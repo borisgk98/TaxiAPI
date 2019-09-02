@@ -47,9 +47,10 @@ async function startProducer(){
             socket = s;
 
             endpoints.forEach(endpoint => {
-                let name = "request." + endpoint;
-                s.on(name, async data => {
-                    await sendKafkaMess(name, data);
+                let topic = "request." + endpoint;
+                s.on(topic, async data => {
+                    console.log("[" + topic + "] " + ans);
+                    await sendKafkaMess(topic, data);
                 });
             });
         });
@@ -70,6 +71,7 @@ async function startConsumer() {
         eachMessage: async ({ topic, partition, message }) => {
             const ans = new String(message.value);
             socket.emit(topic, ans);
+            console.log("[" + topic + "] " + ans);
         },
     })
 }

@@ -37,6 +37,9 @@ public class UserConsumer {
     private IConverter<AuthServiceDataDTO, AuthServiceData> authServiceDataDTOAuthServiceDataConverter;
     @Autowired
     private IConverter<UserDto, User> userDtoUserConverter;
+    @Autowired
+    private IConverter<User, UserDto> userUserDtoConverter;
+
 
     // TODO обработка отсутсвтующего socialIds
     // TODO обработка, если socialId == null
@@ -55,7 +58,7 @@ public class UserConsumer {
             else {
                 user = userService.create(user);
             }
-            String res = om.writeValueAsString(user);
+            String res = om.writeValueAsString(userUserDtoConverter.map(user));
             kafkaTemplate.send("response.user.data", res);
         }
         catch (Exception e) {
