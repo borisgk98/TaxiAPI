@@ -38,6 +38,9 @@ async function sendKafkaMess(topic, mess) {
 
 let socket;
 
+async function logMessage(topic, message) {
+    logger.info("[" + Date.now().toLocaleString("ru-RU") + "][" + topic + "]", message);
+}
 
 async function startProducer(){
 
@@ -52,7 +55,7 @@ async function startProducer(){
             endpoints.forEach(endpoint => {
                 let topic = "request." + endpoint;
                 s.on(topic, async data => {
-                    logger.info("[" + topic + "]", data);
+                    logMessage(topic, data);
                     await sendKafkaMess(topic, data);
                 });
             });
@@ -73,8 +76,10 @@ async function startConsumer() {
     await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
             const ans = new String(message.value);
-            socket.emit(topic, ans);
-            logger.info("[" + topic + "] ", ans);
+            if (socket != undefined) {
+                socket.emit(topic, ans);
+                logMessage(topic, ans);
+            }
         },
     })
 }

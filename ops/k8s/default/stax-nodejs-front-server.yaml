@@ -12,7 +12,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: stax-nodejs-front-server
-        image: borisgk98/stax-nodejs-front-server:latest
+        image: gcr.io/staxtaxi/stax-nodejs-front-server:latest
         ports:
         - containerPort: 3000
         env:

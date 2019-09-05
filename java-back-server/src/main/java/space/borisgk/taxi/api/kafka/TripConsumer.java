@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import space.borisgk.taxi.api.converter.UserToUserDtoConverter;
 import space.borisgk.taxi.api.exception.ServerException;
 import space.borisgk.taxi.api.model.TripStatus;
 import space.borisgk.taxi.api.model.dto.TripDto;
@@ -31,6 +32,8 @@ public class TripConsumer {
     private KafkaTemplate<String, String> kafkaTemplate;
     @Autowired
     private Mapper mapper;
+    @Autowired
+    private UserToUserDtoConverter userToUserDtoConverter;
 
     @KafkaListener(topics = "request.trip.create", groupId = "server-java")
     public void tripCreate(String payload) throws ServerException {
@@ -50,7 +53,19 @@ public class TripConsumer {
     public void tripSearch(String payload) throws ServerException  {
         try {
             List<Trip> trips = tripService.getByStatus(TripStatus.ACTIVE);
-            List<TripDto> tripDtos = trips.stream().map(x -> mapper.map(x, TripDto.class)).collect(Collectors.toList());
+            List<TripDto> tripDtos = trips.stream().map(x ->
+                TripDto.builder()
+                        .addressFrom(x.getAddressFrom())
+                        .addressTo(x.getAddressTo())
+                        .date(x.getDate())
+                        .latFrom(x.getLatFrom())
+                        .latTo(x.getLatTo())
+                        .longFrom(x.getLongFrom())
+                        .longTo(x.getLongTo())
+                        .users(x.getUsers().stream().map(y -> userToUserDtoConverter.map(y)).collect(Collectors.toList()))
+                        .id(x.getId().toString())
+                        .status(x.getStatus())
+                        .build()).collect(Collectors.toList());
             String result = om.writeValueAsString(tripDtos);
             kafkaTemplate.send("response.trip.search", result);
         }
