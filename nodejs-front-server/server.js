@@ -1,3 +1,6 @@
+var log4js = require('log4js');
+var logger = log4js.getLogger();
+
 const server = require('http').createServer();
 const io = require('socket.io')(server);
 
@@ -49,7 +52,7 @@ async function startProducer(){
             endpoints.forEach(endpoint => {
                 let topic = "request." + endpoint;
                 s.on(topic, async data => {
-                    console.log("[" + topic + "] " + ans);
+                    logger.info("[" + topic + "]", data);
                     await sendKafkaMess(topic, data);
                 });
             });
@@ -71,7 +74,7 @@ async function startConsumer() {
         eachMessage: async ({ topic, partition, message }) => {
             const ans = new String(message.value);
             socket.emit(topic, ans);
-            console.log("[" + topic + "] " + ans);
+            logger.info("[" + topic + "] ", ans);
         },
     })
 }

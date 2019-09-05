@@ -21,5 +21,5 @@ public class UserDto {
 
     private String firstName, lastName;
     private String avatarUrl;
-    private Set<AuthServiceDataDTO> authServicesData;
+    private Map<String, AuthServiceDataDTO> authServicesData;
 }

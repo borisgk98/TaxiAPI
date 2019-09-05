@@ -33,8 +33,8 @@ public class UserConsumer {
     private UserService userService;
     @Autowired
     private Mapper mapper;
-    @Autowired
-    private IConverter<AuthServiceDataDTO, AuthServiceData> authServiceDataDTOAuthServiceDataConverter;
+//    @Autowired
+//    private IConverter<AuthServiceDataDTO, AuthServiceData> authServiceDataDTOAuthServiceDataConverter;
     @Autowired
     private IConverter<UserDto, User> userDtoUserConverter;
     @Autowired
@@ -85,7 +85,11 @@ public class UserConsumer {
             UserUpdateFriendsRequest userUpdateFriendsRequest = om.readValue(payload, UserUpdateFriendsRequest.class);
             userService.updateFriends(
                     Integer.parseInt(userUpdateFriendsRequest.getUserId()),
-                    authServiceDataDTOAuthServiceDataConverter.map(userUpdateFriendsRequest.getAuthServiceData()),
+                    AuthServiceData.builder()
+                            .authService(AuthService.fromName(userUpdateFriendsRequest.getAuthService()))
+                            .friendsHash(userUpdateFriendsRequest.getAuthServiceData().getFriendsHash())
+                            .socialId(userUpdateFriendsRequest.getAuthServiceData().getSocialId())
+                            .build(),
                     userUpdateFriendsRequest.getNewFriendsSocialIds(),
                     userUpdateFriendsRequest.getDeletedFriendsSocialIds()
             );

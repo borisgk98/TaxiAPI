@@ -8,10 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthServiceDataDTO {
-
-    private Integer id;
-
-    private String authService;
+    
     private String socialId;
     private Long friendsHash;
 }

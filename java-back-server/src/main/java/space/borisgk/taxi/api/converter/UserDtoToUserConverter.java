@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 @Component
 public class UserDtoToUserConverter implements IConverter<UserDto, User> {
 
-    @Autowired
-    private IConverter<AuthServiceDataDTO, AuthServiceData> authServiceDataDTOAuthServiceDataConverter;
+//    @Autowired
+//    private IConverter<AuthServiceDataDTO, AuthServiceData> authServiceDataDTOAuthServiceDataConverter;
 
     @Override
     public User map(UserDto o) {
@@ -23,8 +23,13 @@ public class UserDtoToUserConverter implements IConverter<UserDto, User> {
             userBuilder = userBuilder.id(Integer.parseInt(o.getId()));
         }
         userBuilder = userBuilder.authServicesData(
-                        o.getAuthServicesData().stream()
-                                .map(x -> authServiceDataDTOAuthServiceDataConverter.map(x))
+                        o.getAuthServicesData().entrySet().stream()
+                                .map(x -> AuthServiceData.builder()
+                                        .authService(AuthService.fromName(x.getKey()))
+                                        .socialId(x.getValue().getSocialId())
+                                        .friendsHash(x.getValue().getFriendsHash())
+                                        .build()
+                                )
                                 .collect(Collectors.toSet())
                 );
         userBuilder = userBuilder.avatarUrl(o.getAvatarUrl());

@@ -14,6 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class UserUpdateFriendsRequest {
     private String userId;
+    private String authService;
     private AuthServiceDataDTO authServiceData;
     private Set<String> newFriendsSocialIds;
     private Set<String> deletedFriendsSocialIds;
