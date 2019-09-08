@@ -36,10 +36,12 @@ async function sendKafkaMess(topic, mess) {
     });
 }
 
-let socket;
-
-async function logMessage(topic, message) {
-    logger.info("[" + Date.now().toLocaleString("ru-RU") + "][" + topic + "]", message);
+async function logInfo(socket, topic, message) {
+    let date = new Date(Date.now());
+    console.log("[" + socket.id + "]" +
+        "[" + date.toLocaleString("ru-RU") + "]" +
+        (topic != null ? "[" + topic + "]" : "") +
+        message);
 }
 
 async function startProducer(){
@@ -48,15 +50,14 @@ async function startProducer(){
 
     io
         .of('')
-        .on('connection', s => {
-
-            socket = s;
-
+        .on('connection', socket => {
+            logInfo(socket, null, "New connection!");
             endpoints.forEach(endpoint => {
                 let topic = "request." + endpoint;
-                s.on(topic, async data => {
-                    logMessage(topic, data);
-                    await sendKafkaMess(topic, data);
+                socket.on(topic, async data => {
+                    logInfo(socket, topic, data);
+                    let message = JSON.stringify({ socket: socket.id, payload: data });
+                    await sendKafkaMess(topic, message);
                 });
             });
         });
@@ -75,10 +76,11 @@ async function startConsumer() {
 
     await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
-            const ans = new String(message.value);
-            if (socket != undefined) {
-                socket.emit(topic, ans);
-                logMessage(topic, ans);
+            const ans = JSON.parse(new String(message.value));
+            let socket = io.sockets.connected[ans.socket];
+            if (socket != undefined && socket != null) {
+                socket.emit(topic, ans.payload);
+                logInfo(socket, topic, ans.payload);
             }
         },
     })

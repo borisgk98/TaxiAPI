@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import space.borisgk.taxi.api.converter.UserToUserDtoConverter;
 import space.borisgk.taxi.api.exception.ServerException;
 import space.borisgk.taxi.api.model.TripStatus;
+import space.borisgk.taxi.api.model.dto.SocketDataWrapper;
 import space.borisgk.taxi.api.model.dto.TripDto;
 import space.borisgk.taxi.api.model.dto.TripAndUserRequest;
 import space.borisgk.taxi.api.model.entity.Trip;
@@ -52,6 +53,7 @@ public class TripConsumer {
     @KafkaListener(topics = "request.trip.search", groupId = "server-java")
     public void tripSearch(String payload) throws ServerException  {
         try {
+            SocketDataWrapper socketDataWrapper = om.readValue(payload, SocketDataWrapper.class);
             List<Trip> trips = tripService.getByStatus(TripStatus.ACTIVE);
             List<TripDto> tripDtos = trips.stream().map(x ->
                 TripDto.builder()
@@ -66,7 +68,7 @@ public class TripConsumer {
                         .id(x.getId().toString())
                         .status(x.getStatus())
                         .build()).collect(Collectors.toList());
-            String result = om.writeValueAsString(tripDtos);
+            String result = om.writeValueAsString(SocketDataWrapper.builder().socket(socketDataWrapper.getSocket()).payload(om.writeValueAsString(tripDtos)).build());
             kafkaTemplate.send("response.trip.search", result);
         }
         catch (Exception e) {
@@ -77,11 +79,12 @@ public class TripConsumer {
     @KafkaListener(topics = "request.trip.join", groupId = "server-java")
     public void tripJoin(String payload) throws ServerException  {
         try {
-            TripAndUserRequest tripJoinRequest = om.readValue(payload, TripAndUserRequest.class);
+            SocketDataWrapper socketDataWrapper = om.readValue(payload, SocketDataWrapper.class);
+            TripAndUserRequest tripJoinRequest = om.readValue(socketDataWrapper.getPayload(), TripAndUserRequest.class);
             Trip trip = tripService.addUserToTrip(Integer.parseInt(tripJoinRequest.getTripId()),
                     Integer.parseInt(tripJoinRequest.getUserId()));
             TripDto tripDto = mapper.map(trip, TripDto.class);
-            String result = "ok";
+            String result = om.writeValueAsString(SocketDataWrapper.builder().payload("ok").socket(socketDataWrapper.getSocket()).build());
             kafkaTemplate.send("response.trip.join", result);
         }
         catch (Exception e) {
@@ -92,11 +95,12 @@ public class TripConsumer {
     @KafkaListener(topics = "request.trip.leave", groupId = "server-java")
     public void tripUnjoin(String payload) throws ServerException  {
         try {
-            TripAndUserRequest tripUnjoinRequest = om.readValue(payload, TripAndUserRequest.class);
+            SocketDataWrapper socketDataWrapper = om.readValue(payload, SocketDataWrapper.class);
+            TripAndUserRequest tripUnjoinRequest = om.readValue(socketDataWrapper.getPayload(), TripAndUserRequest.class);
             Trip trip = tripService.removeUserFromTrip(Integer.parseInt(tripUnjoinRequest.getTripId()),
                     Integer.parseInt(tripUnjoinRequest.getUserId()));
             TripDto tripDto = mapper.map(trip, TripDto.class);
-            String result = "ok";
+            String result = om.writeValueAsString(SocketDataWrapper.builder().payload("ok").socket(socketDataWrapper.getSocket()).build());
             kafkaTemplate.send("response.trip.leave", result);
         }
         catch (Exception e) {
