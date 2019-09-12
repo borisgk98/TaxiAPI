@@ -1,5 +1,11 @@
 spring:
   datasource:
     username: postgres
-    password:
-    url: jdbc:postgresql://borisgk.space:5439/taxi
+    password: ${POSTGRES_PASSWORD}
+    url: jdbc:postgresql://borisgk.space:5432/postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
