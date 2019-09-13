@@ -6,5 +6,6 @@
   "message.create",
   "trip.join",
   "trip.leave",
-  "user.update.friends"
+  "user.update.friends",
+  "user.get.trips"
 ]

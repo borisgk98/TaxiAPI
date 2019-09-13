@@ -6,12 +6,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import space.borisgk.taxi.api.exception.ModelNotFound;
+import space.borisgk.taxi.api.model.TripStatus;
 import space.borisgk.taxi.api.model.entity.AuthServiceData;
+import space.borisgk.taxi.api.model.entity.Trip;
 import space.borisgk.taxi.api.model.entity.User;
 import space.borisgk.taxi.api.repository.UserRepository;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -89,5 +92,17 @@ public class UserService extends AbstractCrudService<User> {
                     .setParameter(3, deletedFriendsSocialIds)
                     .executeUpdate();
         }
+    }
+
+    @Transactional
+    public List<Trip> getTrips(Long userId, TripStatus tripStatus) {
+        return em.createNativeQuery("select t.* from trip t " +
+                        "join trip_users tu on t.id = tu.trip_id " +
+                        "join taxi_user u on tu.user_id = u.id " +
+                        "where t.status = :tripStatus and u.id = :userId",
+                Trip.class)
+                .setParameter("userId", userId)
+                .setParameter("tripStatus", tripStatus.ordinal())
+                .getResultList();
     }
 }

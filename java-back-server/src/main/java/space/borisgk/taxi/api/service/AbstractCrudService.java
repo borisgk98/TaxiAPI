@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import space.borisgk.taxi.api.exception.ModelNotFound;
 import space.borisgk.taxi.api.model.IEntity;
+import space.borisgk.taxi.api.model.TripStatus;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;

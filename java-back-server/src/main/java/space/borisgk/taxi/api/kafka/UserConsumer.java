@@ -9,10 +9,13 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import space.borisgk.taxi.api.converter.IConverter;
+import space.borisgk.taxi.api.converter.UserToUserDtoConverter;
 import space.borisgk.taxi.api.exception.ServerException;
 import space.borisgk.taxi.api.model.dto.AuthServiceDataDTO;
 import space.borisgk.taxi.api.model.dto.SocketDataWrapper;
+import space.borisgk.taxi.api.model.dto.TripDto;
 import space.borisgk.taxi.api.model.dto.UserDto;
+import space.borisgk.taxi.api.model.dto.UserGerTripsRequest;
 import space.borisgk.taxi.api.model.dto.UserUpdateFriendsRequest;
 import space.borisgk.taxi.api.model.entity.AuthService;
 import space.borisgk.taxi.api.model.entity.AuthServiceData;
@@ -20,7 +23,9 @@ import space.borisgk.taxi.api.model.entity.User;
 import space.borisgk.taxi.api.service.UserService;
 
 import java.net.Socket;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class UserConsumer {
@@ -101,6 +106,35 @@ public class UserConsumer {
             );
             String result = om.writeValueAsString(SocketDataWrapper.builder().payload("ok").socket(socketDataWrapper.getSocket()).build());
             kafkaTemplate.send("response.user.update.friends", result);
+        }
+        catch (Exception e) {
+            throw new ServerException(e);
+        }
+    }
+
+    @KafkaListener(topics = "request.user.get.trips", groupId = "server-java")
+    public void getTrips(String payload) throws ServerException {
+        try {
+            SocketDataWrapper socketDataWrapper = om.readValue(payload, SocketDataWrapper.class);
+            UserGerTripsRequest userGerTripsRequest = om.readValue(socketDataWrapper.getPayload(), UserGerTripsRequest.class);
+            List<TripDto> tripDtos = userService.getTrips(
+                    Long.parseLong(userGerTripsRequest.getUserId()),
+                    userGerTripsRequest.getTripStatus()
+            ).stream().map(x ->
+                    TripDto.builder()
+                            .addressFrom(x.getAddressFrom())
+                            .addressTo(x.getAddressTo())
+                            .date(x.getDate())
+                            .latFrom(x.getLatFrom())
+                            .latTo(x.getLatTo())
+                            .longFrom(x.getLongFrom())
+                            .longTo(x.getLongTo())
+                            .users(x.getUsers().stream().map(y -> userUserDtoConverter.map(y)).collect(Collectors.toList()))
+                            .id(x.getId().toString())
+                            .status(x.getStatus())
+                            .build()).collect(Collectors.toList());
+            String result = om.writeValueAsString(SocketDataWrapper.builder().payload(om.writeValueAsString(tripDtos)).socket(socketDataWrapper.getSocket()).build());
+            kafkaTemplate.send("response.user.get.trips", result);
         }
         catch (Exception e) {
             throw new ServerException(e);
