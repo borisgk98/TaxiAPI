@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.1.6.RELEASE'
     id 'java'
     id "io.freefair.lombok" version "3.8.1"
+    id 'net.ltgt.apt' version '0.20'
 }
 
 apply plugin: 'io.spring.dependency-management'
@@ -9,6 +10,7 @@ apply plugin: 'io.spring.dependency-management'
 group = 'space.borisgk.taxi'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+def mapstructVersion = '1.3.0.Final'
 
 configurations {
     compileOnly {
@@ -44,4 +46,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 //    testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-web'
+
+    compile "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+    // If you are using mapstruct in test code
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 }

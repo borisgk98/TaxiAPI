@@ -56,4 +56,7 @@ public class User implements IEntity<Integer> {
     )
     @JsonIgnore
     private Set<User> friends;
+
+    @Transient
+    private Boolean isFriend;
 }

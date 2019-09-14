@@ -30,7 +30,7 @@
 //    @Autowired
 //    private KafkaTemplate<String, String> kafkaTemplate;
 //    @Autowired
-//    private Mapper mapper;
+//    private Mapper instance;
 //
 //    @KafkaListener(topics = "request.data.create", groupId = "server-java")
 //    public void messageCreate(String payload) throws ServerException {
@@ -40,11 +40,11 @@
 //            logger.info(payload);
 //
 //            MessageDto messageDto = om.readValue(payload, MessageDto.class);
-//            Message message = mapper.map(messageDto, Message.class);
+//            Message message = instance.map(messageDto, Message.class);
 //            message.setUser(User.builder().id(Integer.parseInt(messageDto.getUserId())).build());
 //            message.setTrip(Trip.builder().id(Integer.parseInt(messageDto.getTripId())).build());
 //            message = messageService.create(message);
-//            messageDto = mapper.map(message, MessageDto.class);
+//            messageDto = instance.map(message, MessageDto.class);
 //
 //            // TODO высылать только сокетам, которые слушают чат
 //            kafkaTemplate.send("response.data.create", om.writeValueAsString(messageDto));
@@ -63,7 +63,7 @@
 ////
 ////            Integer tripId = Integer.parseInt(payload);
 ////            List<Message> messages = messageService.getAllByTripId(tripId);
-////            List<MessageDto> messageDtos = mapper.map(messages, List.class);
+////            List<MessageDto> messageDtos = instance.map(messages, List.class);
 ////            for (int i = 0; i < messageDtos.size(); i++) {
 ////                messageDtos.get(i).setUserId(messages.get(i).getUser().getId().toString());
 ////                messageDtos.get(i).setTripId(messages.get(i).getTrip().getId().toString());
