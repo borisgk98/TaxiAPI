@@ -7,8 +7,8 @@ pipeline {
     		}
     	    steps {
 		    	sh "export $POSTGRES_PASSWORD=${env.POSTGRES_PASSWORD}"
-		        sh "envsubst < java-back-server/src/main/resources/application.yaml.dist > java-back-server/src/main/resources/application.yaml"
-		        sh "envsubst < docker-compose.yaml.dist > docker-compose.yaml"
+		        sh "envsubst < java-back-server/src/main/resources/application.dist.yaml > java-back-server/src/main/resources/application.yaml"
+		        sh "envsubst < docker-compose.dist.yaml > docker-compose.yaml"
 		    }
     	}
         stage('Build') { 

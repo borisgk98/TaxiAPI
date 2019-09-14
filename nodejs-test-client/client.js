@@ -1,4 +1,4 @@
-var socket = require('socket.io-client')('http://localhost:3000');
+var socket = require('socket.io-client')('http://192.168.2.166:3000');
 socket.on('connect', function(){
     console.log("connect!");
     socket.emit("request.user.get.trips", "{\"userId\":\"1\", \"tripStatus\":\"ACTIVE\"}")
