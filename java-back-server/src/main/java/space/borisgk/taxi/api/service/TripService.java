@@ -52,7 +52,7 @@ public class TripService extends AbstractCrudService<Trip> {
         return update(trip);
     }
 
-//    public List<TripSearchResult_Trip> search() {
+//    public List<Trip> search(Long userId, Double latFrom, Double latTo, Double longFrom, Double longTo) {
 //        em.createNativeQuery("").;
 //    }
 }

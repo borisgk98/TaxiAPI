@@ -14,6 +14,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import space.borisgk.taxi.api.exception.IllegalAspectTargetException;
 import space.borisgk.taxi.api.exception.ServerException;
+import space.borisgk.taxi.api.model.dto.SocketDataWrapper;
 
 import java.lang.reflect.Method;
 
@@ -43,9 +44,10 @@ public class KafkaErrorHandlingAspect {
             throw new IllegalAspectTargetException();
         }
         String payload = call.getArgs()[0].toString();
-        logger.info("[{}] Receive payload: \n{}", topics, payload);
+        SocketDataWrapper socketDataWrapper = om.readValue(payload, SocketDataWrapper.class);
+        logger.info("[{}][Socket:{}] Receive payload: \n{}", topics, socketDataWrapper.getSocket(), socketDataWrapper.getPayload());
         
-        kafkaTemplate.send("response.test", payload);
+        kafkaTemplate.send("response.test", socketDataWrapper.getPayload());
 
         try {
             call.proceed();

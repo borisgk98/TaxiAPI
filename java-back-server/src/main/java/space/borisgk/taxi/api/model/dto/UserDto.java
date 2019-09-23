@@ -22,4 +22,5 @@ public class UserDto {
     private String firstName, lastName;
     private String avatarUrl;
     private Map<String, AuthServiceDataDTO> authServicesData;
+    private Boolean isFriend;
 }

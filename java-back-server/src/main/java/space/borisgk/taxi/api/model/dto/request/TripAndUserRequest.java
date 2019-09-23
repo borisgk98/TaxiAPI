@@ -1,4 +1,4 @@
-package space.borisgk.taxi.api.model.dto;
+package space.borisgk.taxi.api.model.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -11,7 +11,7 @@ import space.borisgk.taxi.api.exception.ServerException;
 import space.borisgk.taxi.api.model.TripStatus;
 import space.borisgk.taxi.api.model.dto.SocketDataWrapper;
 import space.borisgk.taxi.api.model.dto.TripDto;
-import space.borisgk.taxi.api.model.dto.TripAndUserRequest;
+import space.borisgk.taxi.api.model.dto.request.TripAndUserRequest;
 import space.borisgk.taxi.api.model.entity.Trip;
 import space.borisgk.taxi.api.model.mapping.StaxMapper;
 import space.borisgk.taxi.api.service.TripService;
@@ -33,11 +33,15 @@ public class TripConsumer {
     @KafkaListener(topics = "request.trip.create", groupId = "server-java")
     public void tripCreate(String payload) throws ServerException {
         try {
-            TripDto tripDto = null;
-            tripDto = om.readValue(payload, TripDto.class);
+            SocketDataWrapper socketDataWrapper = om.readValue(payload, SocketDataWrapper.class);
+            TripDto tripDto = om.readValue(socketDataWrapper.getPayload(), TripDto.class);
             Trip trip = tripService.create(mapper.dto2e(tripDto));
             tripDto = mapper.e2dto(trip);
-            kafkaTemplate.send("response.trip.create", om.writeValueAsString(tripDto));
+            kafkaTemplate.send("response.trip.create", om.writeValueAsString(SocketDataWrapper
+                    .builder()
+                    .payload(om.writeValueAsString(tripDto))
+                    .socket(socketDataWrapper.getSocket())
+                    .build()));
         }
         catch (Exception e) {
             throw new ServerException(e);

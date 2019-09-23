@@ -1,10 +1,10 @@
-package space.borisgk.taxi.api.model.dto;
+package space.borisgk.taxi.api.model.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import space.borisgk.taxi.api.model.entity.AuthServiceData;
+import space.borisgk.taxi.api.model.dto.AuthServiceDataDTO;
 
 import java.util.Set;
 
