@@ -20,6 +20,8 @@ pipeline {
         stage('Deploy') { 
             steps {
                 sh "docker-compose up -d"
+                sh "ls /databases/postgres"
+                sh "uname -a"
             }
         }
     }
