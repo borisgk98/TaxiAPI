@@ -24,7 +24,7 @@ services:
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - /databases/postgres/staxtaxi/data:/var/lib/postgresql/data
+      - "/databases/postgres/staxtaxi/data/:/var/lib/postgresql/data/"
 
   java-back-server:
     build: ./java-back-server
