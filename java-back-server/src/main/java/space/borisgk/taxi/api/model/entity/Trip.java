@@ -53,4 +53,7 @@ public class Trip implements IEntity<Integer> {
             )
     )
     private Set<User> users;
+
+    @Transient
+    private Boolean hasFriends;
 }

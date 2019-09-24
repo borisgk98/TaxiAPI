@@ -15,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class TripSearchRequest {
 
-    private Date startDate, finishDate;
+    private Date date;
     private Double latFrom, latTo, longFrom, longTo;
     private String userId;
 }

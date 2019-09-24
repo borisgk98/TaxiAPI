@@ -24,4 +24,5 @@ public class TripDto {
     private TripStatus status= TripStatus.ACTIVE;
     private String addressTo, addressFrom;
     private List<UserDto> users;
+    private Boolean hasFriends;
 }

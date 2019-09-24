@@ -11,6 +11,7 @@ import space.borisgk.taxi.api.model.entity.User;
 import space.borisgk.taxi.api.repository.TripRepository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,66 @@ public class TripService extends AbstractCrudService<Trip> {
     }
 
     public List<Trip> search(TripSearchRequest searchRequest) {
-//        List<Trip> friendsTrips = em.createNativeQuery("").getResultList();
-        return new ArrayList<>();
+        Query query1 = em.createNativeQuery("" +
+                "select t.* from taxi_user\n" +
+                "                    join trip_users tu on taxi_user.id = tu.user_id\n" +
+                "                    join trip t on tu.trip_id = t.id\n" +
+                "where taxi_user.id in (\n" +
+                "    select friend_id from taxi_user_friends where user_id = :id\n" +
+                "    )\n" +
+                "union\n" +
+                "select t.* from taxi_user\n" +
+                "                    join trip_users tu on taxi_user.id = tu.user_id\n" +
+                "                    join trip t on tu.trip_id = t.id\n" +
+                "where taxi_user.id = :id\n" +
+                "order by compute_trip_rate(\n" +
+                "                 lat_from,\n" +
+                "                 long_from,\n" +
+                "                 lat_to,\n" +
+                "                 long_to,\n" +
+                "                 cast(:latFrom as double precision),\n" +
+                "                 cast(:longFrom as double precision),\n" +
+                "                 cast(:latTo as double precision),\n" +
+                "                 cast(:longTo as double precision),\n" +
+                "                 cast(:time as timestamp),\n" +
+                "                 date\n" +
+                "             );");
+        query1.setParameter("latFrom", searchRequest.getLatFrom());
+        query1.setParameter("latTo", searchRequest.getLatTo());
+        query1.setParameter("longTo", searchRequest.getLongTo());
+        query1.setParameter("longFrom", searchRequest.getLongFrom());
+        query1.setParameter("time", searchRequest.getDate());
+        query1.setParameter("id", searchRequest.getUserId());
+        List<Trip> friendsTrips = query1.getResultList();
+        friendsTrips.forEach(trip -> trip.setHasFriends(true));
+        Query query2 = em.createNativeQuery("" +
+                "select * from trip " +
+                "order by compute_trip_rate(\n" +
+                "                 lat_from,\n" +
+                "                 long_from,\n" +
+                "                 lat_to,\n" +
+                "                 long_to,\n" +
+                "                 cast(:latFrom as double precision),\n" +
+                "                 cast(:longFrom as double precision),\n" +
+                "                 cast(:latTo as double precision),\n" +
+                "                 cast(:longTo as double precision),\n" +
+                "                 cast(:time as timestamp),\n" +
+                "                 date\n" +
+                "             );");
+        query2.setParameter("latFrom", searchRequest.getLatFrom());
+        query2.setParameter("latTo", searchRequest.getLatTo());
+        query2.setParameter("longTo", searchRequest.getLongTo());
+        query2.setParameter("longFrom", searchRequest.getLongFrom());
+        query2.setParameter("time", searchRequest.getDate());
+        List<Trip> anotherTrips = query2.getResultList();
+        anotherTrips.forEach(trip -> trip.setHasFriends(false));
+        List<Trip> all = new ArrayList<>();
+        all.addAll(friendsTrips);
+        all.addAll(anotherTrips);
+        return all;
+    }
+
+    private boolean fillUsersForTrip(Trip trip, Long userId) {
+        trip.getUsers()
     }
 }
