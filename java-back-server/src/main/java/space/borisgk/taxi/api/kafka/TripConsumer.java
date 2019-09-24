@@ -12,6 +12,7 @@ import space.borisgk.taxi.api.model.TripStatus;
 import space.borisgk.taxi.api.model.dto.SocketDataWrapper;
 import space.borisgk.taxi.api.model.dto.TripDto;
 import space.borisgk.taxi.api.model.dto.request.TripAndUserRequest;
+import space.borisgk.taxi.api.model.dto.request.TripSearchRequest;
 import space.borisgk.taxi.api.model.entity.Trip;
 import space.borisgk.taxi.api.model.mapping.StaxMapper;
 import space.borisgk.taxi.api.service.TripService;
@@ -52,9 +53,11 @@ public class TripConsumer {
     public void tripSearch(String payload) throws ServerException  {
         try {
             SocketDataWrapper socketDataWrapper = om.readValue(payload, SocketDataWrapper.class);
-            List<Trip> trips = tripService.getByStatus(TripStatus.ACTIVE);
+            TripSearchRequest tripSearchRequest = om.readValue(socketDataWrapper.getPayload(), TripSearchRequest.class);
+            List<Trip> trips = tripService.search(tripSearchRequest);
             List<TripDto> tripDtos = trips.stream().map(mapper::e2dto).collect(Collectors.toList());
-            String result = om.writeValueAsString(SocketDataWrapper.builder().socket(socketDataWrapper.getSocket()).payload(om.writeValueAsString(tripDtos)).build());
+            String result = om.writeValueAsString(SocketDataWrapper.builder().socket(socketDataWrapper.getSocket())
+                    .payload(om.writeValueAsString(tripDtos)).build());
             kafkaTemplate.send("response.trip.search", result);
         }
         catch (Exception e) {
@@ -70,7 +73,8 @@ public class TripConsumer {
             Trip trip = tripService.addUserToTrip(Integer.parseInt(tripJoinRequest.getTripId()),
                     Integer.parseInt(tripJoinRequest.getUserId()));
             TripDto tripDto = mapper.e2dto(trip);
-            String result = om.writeValueAsString(SocketDataWrapper.builder().payload("ok").socket(socketDataWrapper.getSocket()).build());
+            String result = om.writeValueAsString(SocketDataWrapper.builder()
+                    .payload("ok").socket(socketDataWrapper.getSocket()).build());
             kafkaTemplate.send("response.trip.join", result);
         }
         catch (Exception e) {
@@ -86,7 +90,8 @@ public class TripConsumer {
             Trip trip = tripService.removeUserFromTrip(Integer.parseInt(tripUnjoinRequest.getTripId()),
                     Integer.parseInt(tripUnjoinRequest.getUserId()));
             TripDto tripDto = mapper.e2dto(trip);
-            String result = om.writeValueAsString(SocketDataWrapper.builder().payload("ok").socket(socketDataWrapper.getSocket()).build());
+            String result = om.writeValueAsString(SocketDataWrapper.builder()
+                    .payload("ok").socket(socketDataWrapper.getSocket()).build());
             kafkaTemplate.send("response.trip.leave", result);
         }
         catch (Exception e) {

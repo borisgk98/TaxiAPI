@@ -5,12 +5,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import space.borisgk.taxi.api.exception.ModelNotFound;
 import space.borisgk.taxi.api.model.TripStatus;
+import space.borisgk.taxi.api.model.dto.request.TripSearchRequest;
 import space.borisgk.taxi.api.model.entity.Trip;
 import space.borisgk.taxi.api.model.entity.User;
 import space.borisgk.taxi.api.repository.TripRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -52,7 +54,8 @@ public class TripService extends AbstractCrudService<Trip> {
         return update(trip);
     }
 
-//    public List<Trip> search(Long userId, Double latFrom, Double latTo, Double longFrom, Double longTo) {
-//        em.createNativeQuery("").;
-//    }
+    public List<Trip> search(TripSearchRequest searchRequest) {
+//        List<Trip> friendsTrips = em.createNativeQuery("").getResultList();
+        return new ArrayList<>();
+    }
 }
