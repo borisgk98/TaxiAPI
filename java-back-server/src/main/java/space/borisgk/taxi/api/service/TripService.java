@@ -20,6 +20,8 @@ import java.util.Set;
 @Service
 public class TripService extends AbstractCrudService<Trip> {
     private ICrudService<User, Integer> userCrudService;
+    // 0.5 km
+    private final Double distanceDelta = 500.0;
 
     public TripService(JpaRepository<Trip, Integer> repository, EntityManager em, CriteriaBuilder cb, ICrudService<User, Integer> userCrudService) {
         super(repository, em, cb);
@@ -75,6 +77,18 @@ public class TripService extends AbstractCrudService<Trip> {
                 "    where taxi_user.id = :id\n" +
                 ")\n" +
                 "select * from s\n" +
+                "where distance_delta(\n" +
+                "              lat_from,\n" +
+                "              long_from,\n" +
+                "              cast(:latFrom as double precision),\n" +
+                "              cast(:longFrom as double precision)\n" +
+                "          ) < :distanceDelta\n" +
+                "  and distance_delta(\n" +
+                "        lat_to,\n" +
+                "        long_to,\n" +
+                "        cast(:latTo as double precision),\n" +
+                "        cast(:longTo as double precision)\n" +
+                "    ) < :distanceDelta\n" +
                 "order by compute_trip_rate(\n" +
                 "                 lat_from,\n" +
                 "                 long_from,\n" +
@@ -92,13 +106,26 @@ public class TripService extends AbstractCrudService<Trip> {
         query1.setParameter("longTo", searchRequest.getLongTo());
         query1.setParameter("longFrom", searchRequest.getLongFrom());
         query1.setParameter("time", searchRequest.getDate());
+        query1.setParameter("distanceDelta", distanceDelta);
         query1.setParameter("id", Long.parseLong(searchRequest.getUserId()));
         List<Trip> friendsTrips = query1.getResultList();
         for (Trip trip : friendsTrips) {
             trip.setHasFriends(true);
         }
         Query query2 = em.createNativeQuery("" +
-                "select * from trip " +
+                "select * from trip\n" +
+                "where distance_delta(\n" +
+                "              lat_from,\n" +
+                "              long_from,\n" +
+                "              cast(:latFrom as double precision),\n" +
+                "              cast(:longFrom as double precision)\n" +
+                "          ) < :distanceDelta\n" +
+                "  and distance_delta(\n" +
+                "              lat_to,\n" +
+                "              long_to,\n" +
+                "              cast(:latTo as double precision),\n" +
+                "              cast(:longTo as double precision)\n" +
+                "          ) < :distanceDelta\n" +
                 "order by compute_trip_rate(\n" +
                 "                 lat_from,\n" +
                 "                 long_from,\n" +
@@ -115,6 +142,7 @@ public class TripService extends AbstractCrudService<Trip> {
         query2.setParameter("latTo", searchRequest.getLatTo());
         query2.setParameter("longTo", searchRequest.getLongTo());
         query2.setParameter("longFrom", searchRequest.getLongFrom());
+        query2.setParameter("distanceDelta", distanceDelta);
         query2.setParameter("time", searchRequest.getDate());
         List<Trip> anotherTrips = query2.getResultList();
         anotherTrips.forEach(trip -> trip.setHasFriends(false));

@@ -1,3 +1,4 @@
+-- возращает растояние между географическими координатами в метрах
 CREATE OR REPLACE FUNCTION distance_delta(
     latFrom double precision,
     longFrom double precision,
@@ -9,7 +10,8 @@ $BODY$
 BEGIN
     return ST_Distance(
             ST_PointFromText('POINT(' || longFrom || ' ' || latFrom || ')', 4326),
-            ST_PointFromText('POINT(' || longTo || ' ' || latTo || ')', 4326)
+            ST_PointFromText('POINT(' || longTo || ' ' || latTo || ')', 4326),
+            true
         );
 END;
 $BODY$
@@ -41,7 +43,7 @@ BEGIN
     startDelta := distance_delta(latFrom, longFrom, tripLatFrom, tripLongFrom);
     finishDelta := distance_delta(latTo, longTo, tripLatTo, tripLongTo);
     timeDelta := cast(extract(epoch from (targetTime - tripTime)) as double precision);
-    return (startDelta + finishDelta) / (5.0 / 60.0 / 60.0) * 2 + timeDelta;
+    return (startDelta + finishDelta) * 1000 / (5.0 / 60.0 / 60.0) * 2 + timeDelta;
 END;
 $BODY$
     LANGUAGE plpgsql;
