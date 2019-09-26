@@ -57,17 +57,24 @@ public class TripService extends AbstractCrudService<Trip> {
 
     public List<Trip> search(TripSearchRequest searchRequest) {
         Query query1 = em.createNativeQuery("" +
-                "select t.* from taxi_user\n" +
-                "                    join trip_users tu on taxi_user.id = tu.user_id\n" +
-                "                    join trip t on tu.trip_id = t.id\n" +
-                "where taxi_user.id in (\n" +
-                "    select friend_id from taxi_user_friends where user_id = :id\n" +
+                "with s as (\n" +
+                "    select t.*\n" +
+                "    from taxi_user\n" +
+                "             join trip_users tu on taxi_user.id = tu.user_id\n" +
+                "             join trip t on tu.trip_id = t.id\n" +
+                "    where taxi_user.id in (\n" +
+                "        select friend_id\n" +
+                "        from taxi_user_friends\n" +
+                "        where user_id = :id\n" +
                 "    )\n" +
-                "union\n" +
-                "select t.* from taxi_user\n" +
-                "                    join trip_users tu on taxi_user.id = tu.user_id\n" +
-                "                    join trip t on tu.trip_id = t.id\n" +
-                "where taxi_user.id = :id\n" +
+                "    union\n" +
+                "    select t.*\n" +
+                "    from taxi_user\n" +
+                "             join trip_users tu on taxi_user.id = tu.user_id\n" +
+                "             join trip t on tu.trip_id = t.id\n" +
+                "    where taxi_user.id = :id\n" +
+                ")\n" +
+                "select * from s\n" +
                 "order by compute_trip_rate(\n" +
                 "                 lat_from,\n" +
                 "                 long_from,\n" +
@@ -79,15 +86,17 @@ public class TripService extends AbstractCrudService<Trip> {
                 "                 cast(:longTo as double precision),\n" +
                 "                 cast(:time as timestamp),\n" +
                 "                 date\n" +
-                "             );");
+                "             );", Trip.class);
         query1.setParameter("latFrom", searchRequest.getLatFrom());
         query1.setParameter("latTo", searchRequest.getLatTo());
         query1.setParameter("longTo", searchRequest.getLongTo());
         query1.setParameter("longFrom", searchRequest.getLongFrom());
         query1.setParameter("time", searchRequest.getDate());
-        query1.setParameter("id", searchRequest.getUserId());
+        query1.setParameter("id", Long.parseLong(searchRequest.getUserId()));
         List<Trip> friendsTrips = query1.getResultList();
-        friendsTrips.forEach(trip -> trip.setHasFriends(true));
+        for (Trip trip : friendsTrips) {
+            trip.setHasFriends(true);
+        }
         Query query2 = em.createNativeQuery("" +
                 "select * from trip " +
                 "order by compute_trip_rate(\n" +
@@ -101,7 +110,7 @@ public class TripService extends AbstractCrudService<Trip> {
                 "                 cast(:longTo as double precision),\n" +
                 "                 cast(:time as timestamp),\n" +
                 "                 date\n" +
-                "             );");
+                "             );", Trip.class);
         query2.setParameter("latFrom", searchRequest.getLatFrom());
         query2.setParameter("latTo", searchRequest.getLatTo());
         query2.setParameter("longTo", searchRequest.getLongTo());
@@ -115,7 +124,7 @@ public class TripService extends AbstractCrudService<Trip> {
         return all;
     }
 
-    private boolean fillUsersForTrip(Trip trip, Long userId) {
-        trip.getUsers()
-    }
+//    private boolean fillUsersForTrip(Trip trip, Long userId) {
+//        trip.getUsers()
+//    }
 }

@@ -41,7 +41,7 @@ BEGIN
     startDelta := distance_delta(latFrom, longFrom, tripLatFrom, tripLongFrom);
     finishDelta := distance_delta(latTo, longTo, tripLatTo, tripLongTo);
     timeDelta := cast(extract(epoch from (targetTime - tripTime)) as double precision);
-    return (startDelta + finishDelta) / (5.0 / 60.0 / 60.0) + timeDelta;
+    return (startDelta + finishDelta) / (5.0 / 60.0 / 60.0) * 2 + timeDelta;
 END;
 $BODY$
     LANGUAGE plpgsql;
