@@ -105,8 +105,7 @@ public class UserConsumer {
             SocketDataWrapper socketDataWrapper = om.readValue(payload, SocketDataWrapper.class);
             UserGerTripsRequest userGerTripsRequest = om.readValue(socketDataWrapper.getPayload(), UserGerTripsRequest.class);
             List<TripDto> tripDtos = userService.getTrips(
-                    Long.parseLong(userGerTripsRequest.getUserId()),
-                    userGerTripsRequest.getTripStatus()
+                    Long.parseLong(userGerTripsRequest.getUserId())
             ).stream().map(mapper::e2dto).collect(Collectors.toList());
             String result = om.writeValueAsString(SocketDataWrapper.builder().payload(om.writeValueAsString(tripDtos)).socket(socketDataWrapper.getSocket()).build());
             kafkaTemplate.send("response.user.get.trips", result);

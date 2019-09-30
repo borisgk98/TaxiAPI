@@ -1,7 +1,5 @@
 package space.borisgk.taxi.api.service;
 
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,17 +8,21 @@ import space.borisgk.taxi.api.model.TripStatus;
 import space.borisgk.taxi.api.model.entity.AuthServiceData;
 import space.borisgk.taxi.api.model.entity.Trip;
 import space.borisgk.taxi.api.model.entity.User;
-import space.borisgk.taxi.api.repository.UserRepository;
 
-import javax.persistence.*;
-import javax.persistence.criteria.*;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class UserService extends AbstractCrudService<User> {
-    private ICrudService<AuthServiceData, Integer> authServiceDataService;
+    private final ICrudService<AuthServiceData, Integer> authServiceDataService;
 
     public UserService(JpaRepository<User, Integer> repository, EntityManager em, CriteriaBuilder cb, ICrudService<AuthServiceData, Integer> authServiceDataService) {
         super(repository, em, cb);
@@ -95,14 +97,31 @@ public class UserService extends AbstractCrudService<User> {
     }
 
     @Transactional
-    public List<Trip> getTrips(Long userId, TripStatus tripStatus) {
-        return em.createNativeQuery("select t.* from trip t " +
+    public List<Trip> getTrips(Long userId) {
+        List<Trip> trips = em.createNativeQuery("select t.* from trip t " +
                         "join trip_users tu on t.id = tu.trip_id " +
                         "join taxi_user u on tu.user_id = u.id " +
-                        "where t.status = :tripStatus and u.id = :userId",
+                        "where t.status != :status and u.id = :userId",
                 Trip.class)
+                .setParameter("status", TripStatus.DELETED)
                 .setParameter("userId", userId)
-                .setParameter("tripStatus", tripStatus.ordinal())
                 .getResultList();
+        trips.stream()
+                .forEach(x -> fillUsersForTrip(x, userId));
+        return trips;
+    }
+
+    public void fillUsersForTrip(Trip trip, Long userId) {
+        Set<User> tripUsers = trip.getUsers();
+        Query query = em.createNativeQuery("select friend_id from taxi_user_friends\n" +
+                "where user_id = :userId and friend_id in :friendIds");
+        query.setParameter("userId", userId);
+        query.setParameter("friendIds", tripUsers.stream().map(User::getId).collect(toList()));
+        Set<Long> userFrinedsIdsInTrip = new HashSet(query.getResultList());
+        for (User user : tripUsers) {
+            if (userFrinedsIdsInTrip.contains(user.getId())) {
+                user.setIsFriend(true);
+            }
+        }
     }
 }

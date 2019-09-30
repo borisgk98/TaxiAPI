@@ -22,11 +22,11 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class TripService extends AbstractCrudService<Trip> {
-    private ICrudService<User, Integer> userCrudService;
+    private UserService userCrudService;
     // 0.5 km
     private final Double distanceDelta = 500.0;
 
-    public TripService(JpaRepository<Trip, Integer> repository, EntityManager em, CriteriaBuilder cb, ICrudService<User, Integer> userCrudService) {
+    public TripService(JpaRepository<Trip, Integer> repository, EntityManager em, CriteriaBuilder cb, UserService userCrudService) {
         super(repository, em, cb);
         this.userCrudService = userCrudService;
     }
@@ -95,7 +95,7 @@ public class TripService extends AbstractCrudService<Trip> {
             List<Trip> friendsTrips = query1.getResultList();
             for (Trip trip : friendsTrips) {
                 trip.setHasFriends(true);
-                fillUsersForTrip(trip, userId);
+                userCrudService.fillUsersForTrip(trip, userId);
             }
 
             Query query2 = em.createNativeQuery("" +
@@ -168,7 +168,7 @@ public class TripService extends AbstractCrudService<Trip> {
             List<Trip> friendsTrips = query1.getResultList();
             for (Trip trip : friendsTrips) {
                 trip.setHasFriends(true);
-                fillUsersForTrip(trip, userId);
+                userCrudService.fillUsersForTrip(trip, userId);
             }
 
             Query query2 = em.createNativeQuery("" +
@@ -214,19 +214,5 @@ public class TripService extends AbstractCrudService<Trip> {
 
     public List<Trip> findAll() {
         return repository.findAll();
-    }
-
-    private void fillUsersForTrip(Trip trip, Long userId) {
-        Set<User> tripUsers = trip.getUsers();
-        Query query = em.createNativeQuery("select friend_id from taxi_user_friends\n" +
-                "where user_id = :userId and friend_id in :friendIds");
-        query.setParameter("userId", userId);
-        query.setParameter("friendIds", tripUsers.stream().map(User::getId).collect(toList()));
-        Set<Long> userFrinedsIdsInTrip = new HashSet(query.getResultList());
-        for (User user : tripUsers) {
-            if (userFrinedsIdsInTrip.contains(user.getId())) {
-                user.setIsFriend(true);
-            }
-        }
     }
 }

@@ -14,5 +14,4 @@ import space.borisgk.taxi.api.model.TripStatus;
 @NoArgsConstructor
 public class UserGerTripsRequest {
     private String userId;
-    private TripStatus tripStatus;
 }
