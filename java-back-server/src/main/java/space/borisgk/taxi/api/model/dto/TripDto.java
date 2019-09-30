@@ -20,7 +20,7 @@ import java.util.List;
 public class TripDto {
     private String id;
 
-    @JsonFormat(pattern = "YYYY-MM-DD'T'hh:mm:ss")
+    @JsonFormat(pattern = "YYYY-MM-DD'T'hh:mm:ss'Z'")
     private Date date;
     private Double latFrom, latTo, longFrom, longTo;
     private TripStatus status= TripStatus.ACTIVE;
