@@ -83,12 +83,14 @@ public class TripService extends AbstractCrudService<Trip> {
                     "    where taxi_user.id = :id\n" +
                     ")\n" +
                     "select * from s\n" +
+                    "where s.status != :status\n" +
                     "order by distance_delta(\n" +
                     "              lat_from,\n" +
                     "              long_from,\n" +
                     "              cast(:latFrom as double precision),\n" +
                     "              cast(:longFrom as double precision)\n" +
                     "          );", Trip.class);
+            query1.setParameter("status", TripStatus.DELETED);
             query1.setParameter("latFrom", searchRequest.getLatFrom());
             query1.setParameter("longFrom", searchRequest.getLongFrom());
             query1.setParameter("id", userId);
@@ -100,12 +102,14 @@ public class TripService extends AbstractCrudService<Trip> {
 
             Query query2 = em.createNativeQuery("" +
                     "select * from trip\n" +
+                    "where status != :status\n" +
                     "order by distance_delta(\n" +
                     "              lat_from,\n" +
                     "              long_from,\n" +
                     "              cast(:latFrom as double precision),\n" +
                     "              cast(:longFrom as double precision)\n" +
                     "          );", Trip.class);
+            query2.setParameter("status", TripStatus.DELETED);
             query2.setParameter("latFrom", searchRequest.getLatFrom());
             query2.setParameter("longFrom", searchRequest.getLongFrom());
             List<Trip> anotherTrips = query2.getResultList();
@@ -131,7 +135,7 @@ public class TripService extends AbstractCrudService<Trip> {
                     "    from taxi_user\n" +
                     "             join trip_users tu on taxi_user.id = tu.user_id\n" +
                     "             join trip t on tu.trip_id = t.id\n" +
-                    "    where taxi_user.id = :id\n" +
+                    "    where t.status != :status and taxi_user.id = :id\n" +
                     ")\n" +
                     "select * from s\n" +
                     "where distance_delta(\n" +
@@ -158,6 +162,7 @@ public class TripService extends AbstractCrudService<Trip> {
                     "                 cast(:time as timestamp),\n" +
                     "                 date\n" +
                     "             );", Trip.class);
+            query1.setParameter("status", TripStatus.DELETED.ordinal());
             query1.setParameter("latFrom", searchRequest.getLatFrom());
             query1.setParameter("latTo", searchRequest.getLatTo());
             query1.setParameter("longTo", searchRequest.getLongTo());
@@ -173,7 +178,7 @@ public class TripService extends AbstractCrudService<Trip> {
 
             Query query2 = em.createNativeQuery("" +
                     "select * from trip\n" +
-                    "where distance_delta(\n" +
+                    "where status != :status and distance_delta(\n" +
                     "              lat_from,\n" +
                     "              long_from,\n" +
                     "              cast(:latFrom as double precision),\n" +
@@ -197,6 +202,7 @@ public class TripService extends AbstractCrudService<Trip> {
                     "                 cast(:time as timestamp),\n" +
                     "                 date\n" +
                     "             );", Trip.class);
+            query2.setParameter("status", TripStatus.DELETED.ordinal());
             query2.setParameter("latFrom", searchRequest.getLatFrom());
             query2.setParameter("latTo", searchRequest.getLatTo());
             query2.setParameter("longTo", searchRequest.getLongTo());
