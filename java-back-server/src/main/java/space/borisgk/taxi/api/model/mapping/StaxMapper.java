@@ -36,10 +36,10 @@ public interface StaxMapper {
     @Mapping(source = "authServicesData", target = "authServicesData", qualifiedByName = "authServiceDataToAuthServiceDataDto")
     UserDto e2dto(User user);
 
-    @Mapping(source = "date", target = "date", dateFormat = "YYYY-MM-DDThh:mm:ss")
+//    @Mapping(source = "date", target = "date", dateFormat = "YYYY-MM-DDThh:mm:ss")
     Trip dto2e(TripDto tripDto);
 
-    @Mapping(source = "date", target = "date", dateFormat = "YYYY-MM-DDThh:mm:ss")
+//    @Mapping(source = "date", target = "date", dateFormat = "YYYY-MM-DDThh:mm:ss")
     TripDto e2dto(Trip trip);
 
     @Named("authServiceDataDtoToAuthServiceData")

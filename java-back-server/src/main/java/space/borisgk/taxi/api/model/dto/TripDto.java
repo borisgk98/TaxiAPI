@@ -1,5 +1,6 @@
 package space.borisgk.taxi.api.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import space.borisgk.taxi.api.model.TripStatus;
 import space.borisgk.taxi.api.model.entity.User;
@@ -19,6 +20,7 @@ import java.util.List;
 public class TripDto {
     private String id;
 
+    @JsonFormat(pattern = "YYYY-MM-DD'T'hh:mm:ss")
     private Date date;
     private Double latFrom, latTo, longFrom, longTo;
     private TripStatus status= TripStatus.ACTIVE;
