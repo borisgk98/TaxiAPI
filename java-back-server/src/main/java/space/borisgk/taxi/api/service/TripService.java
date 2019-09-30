@@ -90,7 +90,7 @@ public class TripService extends AbstractCrudService<Trip> {
                     "              cast(:latFrom as double precision),\n" +
                     "              cast(:longFrom as double precision)\n" +
                     "          );", Trip.class);
-            query1.setParameter("status", TripStatus.DELETED);
+            query1.setParameter("status", TripStatus.DELETED.ordinal());
             query1.setParameter("latFrom", searchRequest.getLatFrom());
             query1.setParameter("longFrom", searchRequest.getLongFrom());
             query1.setParameter("id", userId);
@@ -109,7 +109,7 @@ public class TripService extends AbstractCrudService<Trip> {
                     "              cast(:latFrom as double precision),\n" +
                     "              cast(:longFrom as double precision)\n" +
                     "          );", Trip.class);
-            query2.setParameter("status", TripStatus.DELETED);
+            query2.setParameter("status", TripStatus.DELETED.ordinal());
             query2.setParameter("latFrom", searchRequest.getLatFrom());
             query2.setParameter("longFrom", searchRequest.getLongFrom());
             List<Trip> anotherTrips = query2.getResultList();
