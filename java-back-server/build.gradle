@@ -52,4 +52,7 @@ dependencies {
 
     // If you are using mapstruct in test code
     testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+    // https://mvnrepository.com/artifact/junit/junit
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 }

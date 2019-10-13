@@ -8,7 +8,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import space.borisgk.taxi.api.exception.ServerException;
-import space.borisgk.taxi.api.model.TripStatus;
 import space.borisgk.taxi.api.model.dto.SocketDataWrapper;
 import space.borisgk.taxi.api.model.dto.TripDto;
 import space.borisgk.taxi.api.model.dto.request.TripAndUserRequest;

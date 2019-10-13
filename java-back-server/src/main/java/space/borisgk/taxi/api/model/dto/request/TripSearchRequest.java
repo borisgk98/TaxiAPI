@@ -18,4 +18,5 @@ public class TripSearchRequest {
     private Date date;
     private Double latFrom, latTo, longFrom, longTo;
     private String userId;
+    private Long numberOfSeats;
 }

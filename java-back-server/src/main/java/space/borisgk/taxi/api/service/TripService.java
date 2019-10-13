@@ -75,7 +75,7 @@ public class TripService extends AbstractCrudService<Trip> {
                     "        from taxi_user_friends\n" +
                     "        where user_id = :id\n" +
                     "    )\n" +
-                    "    union\n" +
+                    "    union distinct\n" +
                     "    select t.*\n" +
                     "    from taxi_user\n" +
                     "             join trip_users tu on taxi_user.id = tu.user_id\n" +
