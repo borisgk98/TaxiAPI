@@ -103,7 +103,7 @@ public class UserConsumer {
     public void getTrips(String payload) throws ServerException {
         try {
             SocketDataWrapper socketDataWrapper = om.readValue(payload, SocketDataWrapper.class);
-            Integer id = Integer.parseInt(socketDataWrapper.getPayload());
+            Long id = Long.parseLong(socketDataWrapper.getPayload());
             List<TripDto> tripDtos = userService.getTrips(id).stream().map(mapper::e2dto).collect(Collectors.toList());
             String result = om.writeValueAsString(SocketDataWrapper.builder().payload(om.writeValueAsString(tripDtos)).socket(socketDataWrapper.getSocket()).build());
             kafkaTemplate.send("response.user.get.trips", result);

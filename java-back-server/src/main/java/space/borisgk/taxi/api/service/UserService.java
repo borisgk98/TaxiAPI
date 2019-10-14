@@ -101,9 +101,8 @@ public class UserService extends AbstractCrudService<User> {
         List<Trip> trips = em.createNativeQuery("select t.* from trip t " +
                         "join trip_users tu on t.id = tu.trip_id " +
                         "join taxi_user u on tu.user_id = u.id " +
-                        "where t.status != :status and u.id = :userId",
+                        "where u.id = :userId",
                 Trip.class)
-                .setParameter("status", TripStatus.DELETED)
                 .setParameter("userId", userId)
                 .getResultList();
         trips.stream()
