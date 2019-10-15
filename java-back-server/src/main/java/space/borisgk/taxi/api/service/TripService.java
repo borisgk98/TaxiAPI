@@ -92,14 +92,14 @@ public class TripService extends AbstractCrudService<Trip> {
                     "    where taxi_user.id = :id\n" +
                     ")\n" +
                     "select * from s\n" +
-                    "where s.status != :status\n" +
+                    "where s.status in :statuses and s.date >= now()\n" +
                     "order by distance_delta(\n" +
                     "              lat_from,\n" +
                     "              long_from,\n" +
                     "              cast(:latFrom as double precision),\n" +
                     "              cast(:longFrom as double precision)\n" +
                     "          );", Trip.class);
-            query1.setParameter("status", TripStatus.DELETED.ordinal());
+            query1.setParameter("statuses", List.of(TripStatus.ACTIVE.ordinal()));
             query1.setParameter("latFrom", searchRequest.getLatFrom());
             query1.setParameter("longFrom", searchRequest.getLongFrom());
             query1.setParameter("id", userId);
@@ -128,14 +128,14 @@ public class TripService extends AbstractCrudService<Trip> {
                     "    where taxi_user.id = :id\n" +
                     ")\n" +
                     "select * from trip\n" +
-                    "where status != :status\n and trip.id not in (select id from s)" +
+                    "where status in :statuses\n and trip.id not in (select id from s) and trip.date >= now()\n" +
                     "order by distance_delta(\n" +
                     "              lat_from,\n" +
                     "              long_from,\n" +
                     "              cast(:latFrom as double precision),\n" +
                     "              cast(:longFrom as double precision)\n" +
                     "          );", Trip.class);
-            query2.setParameter("status", TripStatus.DELETED.ordinal());
+            query2.setParameter("statuses", List.of(TripStatus.ACTIVE.ordinal()));
             query2.setParameter("latFrom", searchRequest.getLatFrom());
             query2.setParameter("longFrom", searchRequest.getLongFrom());
             query2.setParameter("id", userId);
@@ -162,7 +162,7 @@ public class TripService extends AbstractCrudService<Trip> {
                     "    from taxi_user\n" +
                     "             join trip_users tu on taxi_user.id = tu.user_id\n" +
                     "             join trip t on tu.trip_id = t.id\n" +
-                    "    where t.status != :status and taxi_user.id = :id\n" +
+                    "    where t.status in :statuses and taxi_user.id = :id\n" +
                     ")\n" +
                     "select * from s\n" +
                     "where distance_delta(\n" +
@@ -176,7 +176,7 @@ public class TripService extends AbstractCrudService<Trip> {
                     "        long_to,\n" +
                     "        cast(:latTo as double precision),\n" +
                     "        cast(:longTo as double precision)\n" +
-                    "    ) < :distanceDelta\n" +
+                    "    ) < :distanceDelta\n and s.date >= now()\n" +
                     "order by compute_trip_rate(\n" +
                     "                 lat_from,\n" +
                     "                 long_from,\n" +
@@ -186,15 +186,15 @@ public class TripService extends AbstractCrudService<Trip> {
                     "                 cast(:longFrom as double precision),\n" +
                     "                 cast(:latTo as double precision),\n" +
                     "                 cast(:longTo as double precision),\n" +
-                    "                 cast(:time as timestamp),\n" +
+                    "                 cast(:tripTime as timestamp),\n" +
                     "                 date\n" +
                     "             );", Trip.class);
-            query1.setParameter("status", TripStatus.DELETED.ordinal());
+            query1.setParameter("statuses", List.of(TripStatus.ACTIVE.ordinal()));
             query1.setParameter("latFrom", searchRequest.getLatFrom());
             query1.setParameter("latTo", searchRequest.getLatTo());
             query1.setParameter("longTo", searchRequest.getLongTo());
             query1.setParameter("longFrom", searchRequest.getLongFrom());
-            query1.setParameter("time", searchRequest.getDate());
+            query1.setParameter("tripTime", searchRequest.getDate());
             query1.setParameter("distanceDelta", distanceDelta);
             query1.setParameter("id", userId);
             List<Trip> friendsTrips = query1.getResultList();
@@ -219,15 +219,16 @@ public class TripService extends AbstractCrudService<Trip> {
                     "    from taxi_user\n" +
                     "             join trip_users tu on taxi_user.id = tu.user_id\n" +
                     "             join trip t on tu.trip_id = t.id\n" +
-                    "    where t.status != :status and taxi_user.id = :id\n" +
+                    "    where t.status in :statuses and taxi_user.id = :id\n" +
                     ")\n" +
-                    "select * from trip and trip.id not in (select id from s)\n" +
-                    "where status != :status and distance_delta(\n" +
+                    "select * from trip\n" +
+                    "where status != :status and trip.id not in (select id from s) and distance_delta(\n" +
                     "              lat_from,\n" +
                     "              long_from,\n" +
                     "              cast(:latFrom as double precision),\n" +
                     "              cast(:longFrom as double precision)\n" +
-                    "          ) < :distanceDelta\n" +
+                    "          ) < :distanceDelta\n " +
+                    "and trip.date >= now()\n" +
                     "  and distance_delta(\n" +
                     "              lat_to,\n" +
                     "              long_to,\n" +
@@ -243,17 +244,17 @@ public class TripService extends AbstractCrudService<Trip> {
                     "                 cast(:longFrom as double precision),\n" +
                     "                 cast(:latTo as double precision),\n" +
                     "                 cast(:longTo as double precision),\n" +
-                    "                 cast(:time as timestamp),\n" +
+                    "                 cast(:tripTime as timestamp),\n" +
                     "                 date\n" +
                     "             );", Trip.class);
-            query2.setParameter("status", TripStatus.DELETED.ordinal());
+            query2.setParameter("statuses", List.of(TripStatus.ACTIVE.ordinal()));
             query2.setParameter("latFrom", searchRequest.getLatFrom());
             query2.setParameter("latTo", searchRequest.getLatTo());
             query2.setParameter("longTo", searchRequest.getLongTo());
             query2.setParameter("longFrom", searchRequest.getLongFrom());
             query2.setParameter("distanceDelta", distanceDelta);
             query2.setParameter("id", userId);
-            query2.setParameter("time", searchRequest.getDate());
+            query2.setParameter("tripTime", searchRequest.getDate());
             List<Trip> anotherTrips = query2.getResultList();
             anotherTrips.forEach(trip -> trip.setHasFriends(false));
             List<Trip> all = new ArrayList<>();
