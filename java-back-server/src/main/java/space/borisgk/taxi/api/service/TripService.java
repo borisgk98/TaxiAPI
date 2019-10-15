@@ -101,8 +101,25 @@ public class TripService extends AbstractCrudService<Trip> {
             }
 
             Query query2 = em.createNativeQuery("" +
+                    "with s as (\n" +
+                    "    select t.*\n" +
+                    "    from taxi_user\n" +
+                    "             join trip_users tu on taxi_user.id = tu.user_id\n" +
+                    "             join trip t on tu.trip_id = t.id\n" +
+                    "    where taxi_user.id in (\n" +
+                    "        select friend_id\n" +
+                    "        from taxi_user_friends\n" +
+                    "        where user_id = :id\n" +
+                    "    )\n" +
+                    "    union distinct\n" +
+                    "    select t.*\n" +
+                    "    from taxi_user\n" +
+                    "             join trip_users tu on taxi_user.id = tu.user_id\n" +
+                    "             join trip t on tu.trip_id = t.id\n" +
+                    "    where taxi_user.id = :id\n" +
+                    ")\n" +
                     "select * from trip\n" +
-                    "where status != :status\n" +
+                    "where status != :status\n and trip.id not in (select id from s)" +
                     "order by distance_delta(\n" +
                     "              lat_from,\n" +
                     "              long_from,\n" +
@@ -112,6 +129,7 @@ public class TripService extends AbstractCrudService<Trip> {
             query2.setParameter("status", TripStatus.DELETED.ordinal());
             query2.setParameter("latFrom", searchRequest.getLatFrom());
             query2.setParameter("longFrom", searchRequest.getLongFrom());
+            query2.setParameter("id", userId);
             List<Trip> anotherTrips = query2.getResultList();
             anotherTrips.forEach(trip -> trip.setHasFriends(false));
             List<Trip> all = new ArrayList<>();
@@ -177,7 +195,24 @@ public class TripService extends AbstractCrudService<Trip> {
             }
 
             Query query2 = em.createNativeQuery("" +
-                    "select * from trip\n" +
+                    "with s as (\n" +
+                    "    select t.*\n" +
+                    "    from taxi_user\n" +
+                    "             join trip_users tu on taxi_user.id = tu.user_id\n" +
+                    "             join trip t on tu.trip_id = t.id\n" +
+                    "    where taxi_user.id in (\n" +
+                    "        select friend_id\n" +
+                    "        from taxi_user_friends\n" +
+                    "        where user_id = :id\n" +
+                    "    )\n" +
+                    "    union\n" +
+                    "    select t.*\n" +
+                    "    from taxi_user\n" +
+                    "             join trip_users tu on taxi_user.id = tu.user_id\n" +
+                    "             join trip t on tu.trip_id = t.id\n" +
+                    "    where t.status != :status and taxi_user.id = :id\n" +
+                    ")\n" +
+                    "select * from trip and trip.id not in (select id from s)\n" +
                     "where status != :status and distance_delta(\n" +
                     "              lat_from,\n" +
                     "              long_from,\n" +
@@ -208,6 +243,7 @@ public class TripService extends AbstractCrudService<Trip> {
             query2.setParameter("longTo", searchRequest.getLongTo());
             query2.setParameter("longFrom", searchRequest.getLongFrom());
             query2.setParameter("distanceDelta", distanceDelta);
+            query2.setParameter("id", userId);
             query2.setParameter("time", searchRequest.getDate());
             List<Trip> anotherTrips = query2.getResultList();
             anotherTrips.forEach(trip -> trip.setHasFriends(false));
