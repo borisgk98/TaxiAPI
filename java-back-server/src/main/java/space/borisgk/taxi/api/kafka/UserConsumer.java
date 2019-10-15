@@ -12,6 +12,7 @@ import space.borisgk.taxi.api.model.dto.SocketDataWrapper;
 import space.borisgk.taxi.api.model.dto.TripDto;
 import space.borisgk.taxi.api.model.dto.UserDto;
 import space.borisgk.taxi.api.model.dto.UserStatisticDto;
+import space.borisgk.taxi.api.model.dto.request.IsReportedRequest;
 import space.borisgk.taxi.api.model.dto.request.ReportUserRequest;
 import space.borisgk.taxi.api.model.dto.request.UserUpdateFriendsRequest;
 import space.borisgk.taxi.api.model.entity.AuthService;
@@ -123,6 +124,20 @@ public class UserConsumer {
             UserStatisticDto userStatisticDto = userService.getStatistic(id);
             String result = om.writeValueAsString(SocketDataWrapper.builder().payload(om.writeValueAsString(userStatisticDto)).socket(socketDataWrapper.getSocket()).build());
             kafkaTemplate.send("response.user.statistic", result);
+        }
+        catch (Exception e) {
+            throw new ServerException(e);
+        }
+    }
+
+    @KafkaListener(topics = "request.user.isReported", groupId = "server-java")
+    public void isReported(String payload) throws ServerException {
+        try {
+            SocketDataWrapper socketDataWrapper = om.readValue(payload, SocketDataWrapper.class);
+            IsReportedRequest isReportedRequest =om.readValue(socketDataWrapper.getPayload(), IsReportedRequest.class);
+            Boolean isReported = userService.isReported(isReportedRequest.getUserId(), isReportedRequest.getTripId());
+            String result = om.writeValueAsString(SocketDataWrapper.builder().payload(om.writeValueAsString(isReported)).socket(socketDataWrapper.getSocket()).build());
+            kafkaTemplate.send("response.user.isReported", result);
         }
         catch (Exception e) {
             throw new ServerException(e);

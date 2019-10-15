@@ -131,6 +131,9 @@ public class UserService extends AbstractCrudService<User> {
     }
 
     public void reportUser(Integer tripId, Integer reporterId, Integer userId, Date date) {
+        if (isReported(userId, tripId)) {
+            return;
+        }
         UserReport userReport = UserReport.builder()
                 .reporter(repository.getOne(reporterId))
                 .trip(tripRepository.getOne(tripId))
@@ -144,5 +147,9 @@ public class UserService extends AbstractCrudService<User> {
         UserStatisticDto statistic = new UserStatisticDto();
         statistic.setReportCount(userReportRepository.countByUser(id));
         return statistic;
+    }
+
+    public boolean isReported(Integer userId, Integer tripId) {
+        return userReportRepository.existsByUserIdAndTripId(userId, tripId);
     }
 }
