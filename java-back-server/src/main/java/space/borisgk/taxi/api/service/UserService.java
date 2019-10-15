@@ -8,25 +8,29 @@ import space.borisgk.taxi.api.model.TripStatus;
 import space.borisgk.taxi.api.model.entity.AuthServiceData;
 import space.borisgk.taxi.api.model.entity.Trip;
 import space.borisgk.taxi.api.model.entity.User;
+import space.borisgk.taxi.api.model.entity.UserReport;
+import space.borisgk.taxi.api.repository.TripRepository;
+import space.borisgk.taxi.api.repository.UserReportRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
 @Service
 public class UserService extends AbstractCrudService<User> {
     private final ICrudService<AuthServiceData, Integer> authServiceDataService;
+    private final TripRepository tripRepository;
+    private final UserReportRepository userReportRepository;
 
-    public UserService(JpaRepository<User, Integer> repository, EntityManager em, CriteriaBuilder cb, ICrudService<AuthServiceData, Integer> authServiceDataService) {
+    public UserService(JpaRepository<User, Integer> repository, EntityManager em, CriteriaBuilder cb, ICrudService<AuthServiceData, Integer> authServiceDataService, TripRepository tripRepository, UserReportRepository userReportRepository) {
         super(repository, em, cb);
         this.authServiceDataService = authServiceDataService;
+        this.tripRepository = tripRepository;
+        this.userReportRepository = userReportRepository;
     }
 
     public Optional<User> getUserByAuthServiceData(Set<AuthServiceData> authServiceData) {
@@ -122,5 +126,15 @@ public class UserService extends AbstractCrudService<User> {
                 user.setIsFriend(true);
             }
         }
+    }
+
+    public void reportUser(Integer tripId, Integer reporterId, Integer userId, Date date) {
+        UserReport userReport = UserReport.builder()
+                .reporter(repository.getOne(reporterId))
+                .trip(tripRepository.getOne(tripId))
+                .user(repository.getOne(userId))
+                .date(date)
+                .build();
+        userReportRepository.save(userReport);
     }
 }

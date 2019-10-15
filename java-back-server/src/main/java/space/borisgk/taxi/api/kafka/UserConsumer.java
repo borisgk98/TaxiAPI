@@ -11,7 +11,7 @@ import space.borisgk.taxi.api.exception.ServerException;
 import space.borisgk.taxi.api.model.dto.SocketDataWrapper;
 import space.borisgk.taxi.api.model.dto.TripDto;
 import space.borisgk.taxi.api.model.dto.UserDto;
-import space.borisgk.taxi.api.model.dto.request.UserGerTripsRequest;
+import space.borisgk.taxi.api.model.dto.request.ReportUserRequest;
 import space.borisgk.taxi.api.model.dto.request.UserUpdateFriendsRequest;
 import space.borisgk.taxi.api.model.entity.AuthService;
 import space.borisgk.taxi.api.model.entity.AuthServiceData;
@@ -19,6 +19,7 @@ import space.borisgk.taxi.api.model.entity.User;
 import space.borisgk.taxi.api.model.mapping.StaxMapper;
 import space.borisgk.taxi.api.service.UserService;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -107,6 +108,21 @@ public class UserConsumer {
             List<TripDto> tripDtos = userService.getTrips(id).stream().map(mapper::e2dto).collect(Collectors.toList());
             String result = om.writeValueAsString(SocketDataWrapper.builder().payload(om.writeValueAsString(tripDtos)).socket(socketDataWrapper.getSocket()).build());
             kafkaTemplate.send("response.user.trips", result);
+        }
+        catch (Exception e) {
+            throw new ServerException(e);
+        }
+    }
+
+    @KafkaListener(topics = "request.user.report", groupId = "server-java")
+    public void reportUser(String payload) throws ServerException {
+        try {
+            SocketDataWrapper socketDataWrapper = om.readValue(payload, SocketDataWrapper.class);
+            ReportUserRequest reportUserRequest = om.readValue(socketDataWrapper.getPayload(), ReportUserRequest.class);
+            Date date = mapper.string2date(reportUserRequest.getDate());
+            userService.reportUser(reportUserRequest.getTripId(), reportUserRequest.getReporterId(), reportUserRequest.getUserId(), date);
+            String result = om.writeValueAsString(SocketDataWrapper.builder().payload("ok").socket(socketDataWrapper.getSocket()).build());
+            kafkaTemplate.send("response.user.report", result);
         }
         catch (Exception e) {
             throw new ServerException(e);

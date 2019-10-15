@@ -590,7 +590,27 @@ ALTER TABLE ONLY public.taxi_user_auth_service_data
     ADD CONSTRAINT fkntp0ksypdts3oihsn1u6gf5i1 FOREIGN KEY (user_id) REFERENCES public.taxi_user(id);
 
 
+
+create table public.user_report
+(
+	id serial not null
+		constraint user_report_pkey
+			primary key,
+	date timestamp,
+	reporter_id integer
+		constraint fk2ee261swxncqk6jew9nr6xplj
+			references public.taxi_user,
+	trip_id integer
+		constraint fk2oglwts6iadbp213kq2htvkyb
+			references public.trip,
+	user_id integer
+		constraint fk9haxafjlg9upba1kb55d7bbil
+			references public.taxi_user
+);
+
 --
 -- PostgreSQL database dump complete
 --
+
+
 
