@@ -43,6 +43,12 @@ public class TripService extends AbstractCrudService<Trip> {
         Set<User> tripUsers = trip.getUsers();
         tripUsers.add(user);
         trip.setUsers(tripUsers);
+        if (tripUsers.size() == trip.getNumberOfSeats()) {
+            trip.setStatus(TripStatus.COLLECTED);
+        }
+        else {
+            trip.setStatus(TripStatus.ACTIVE);
+        }
         return update(trip);
     }
 
@@ -55,6 +61,9 @@ public class TripService extends AbstractCrudService<Trip> {
         tripUsers.remove(user);
         if (tripUsers.size() == 0) {
             trip.setStatus(TripStatus.DELETED);
+        }
+        else {
+            trip.setStatus(TripStatus.ACTIVE);
         }
         trip.setUsers(tripUsers);
         return update(trip);

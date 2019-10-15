@@ -39,6 +39,8 @@ public class Trip implements IEntity<Integer> {
     private String addressTo;
     @Column(name = "address_from")
     private String addressFrom;
+    @Column(name = "number_of_seats")
+    private Integer numberOfSeats;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

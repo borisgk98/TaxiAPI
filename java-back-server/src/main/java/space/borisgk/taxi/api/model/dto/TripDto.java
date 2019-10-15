@@ -5,10 +5,7 @@ import lombok.*;
 import space.borisgk.taxi.api.model.TripStatus;
 import space.borisgk.taxi.api.model.entity.User;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
@@ -27,4 +24,5 @@ public class TripDto {
     private String addressTo, addressFrom;
     private List<UserDto> users;
     private Boolean hasFriends;
+    private Integer numberOfSeats;
 }
