@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class UserStatisticDto {
-    private Long reportCount;
+    private Long reportsCount;
+    private Long tripsCount;
 }

@@ -1,6 +1,5 @@
 package space.borisgk.taxi.api.service;
 
-import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,7 +144,8 @@ public class UserService extends AbstractCrudService<User> {
 
     public UserStatisticDto getStatistics(Integer id) {
         UserStatisticDto statistic = new UserStatisticDto();
-        statistic.setReportCount(userReportRepository.countByUser(id));
+        statistic.setReportsCount(userReportRepository.countByUser(id));
+        statistic.setTripsCount(tripRepository.countByUserAndStatuses(id, TripStatus.getNotDeletedIds()));
         return statistic;
     }
 
