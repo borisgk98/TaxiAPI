@@ -99,14 +99,14 @@ public class UserConsumer {
         }
     }
 
-    @KafkaListener(topics = "request.user.get.trips", groupId = "server-java")
+    @KafkaListener(topics = "request.user.trips", groupId = "server-java")
     public void getTrips(String payload) throws ServerException {
         try {
             SocketDataWrapper socketDataWrapper = om.readValue(payload, SocketDataWrapper.class);
             Long id = Long.parseLong(socketDataWrapper.getPayload());
             List<TripDto> tripDtos = userService.getTrips(id).stream().map(mapper::e2dto).collect(Collectors.toList());
             String result = om.writeValueAsString(SocketDataWrapper.builder().payload(om.writeValueAsString(tripDtos)).socket(socketDataWrapper.getSocket()).build());
-            kafkaTemplate.send("response.user.get.trips", result);
+            kafkaTemplate.send("response.user.trips", result);
         }
         catch (Exception e) {
             throw new ServerException(e);

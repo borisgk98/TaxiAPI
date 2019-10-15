@@ -7,5 +7,5 @@
   "trip.join",
   "trip.leave",
   "user.update.friends",
-  "user.get.trips"
+  "user.trips"
 ]

@@ -69,7 +69,7 @@ async function startConsumer() {
     await consumer.connect();
     endpoints.forEach(async endpoint => {
         let name = "response." + endpoint;
-        await consumer.subscribe({ topic: name, fromBeginning: false });
+        await consumer.subscribe({ topic: name, fromBeginning: false });gk.space
     });
     await consumer.subscribe({ topic: 'error', fromBeginning: false });
     await consumer.subscribe({ topic: 'response.test', fromBeginning: false });
