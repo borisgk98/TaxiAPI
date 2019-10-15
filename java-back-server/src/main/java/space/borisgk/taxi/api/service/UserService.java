@@ -1,10 +1,12 @@
 package space.borisgk.taxi.api.service;
 
+import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import space.borisgk.taxi.api.exception.ModelNotFound;
 import space.borisgk.taxi.api.model.TripStatus;
+import space.borisgk.taxi.api.model.dto.UserStatisticDto;
 import space.borisgk.taxi.api.model.entity.AuthServiceData;
 import space.borisgk.taxi.api.model.entity.Trip;
 import space.borisgk.taxi.api.model.entity.User;
@@ -136,5 +138,11 @@ public class UserService extends AbstractCrudService<User> {
                 .date(date)
                 .build();
         userReportRepository.save(userReport);
+    }
+
+    public UserStatisticDto getStatistic(Integer id) {
+        UserStatisticDto statistic = new UserStatisticDto();
+        statistic.setReportCount(userReportRepository.countByUser(id));
+        return statistic;
     }
 }

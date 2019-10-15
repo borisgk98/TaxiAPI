@@ -8,5 +8,6 @@
   "trip.leave",
   "user.update.friends",
   "user.trips",
-  "user.report"
+  "user.report",
+  "user.statistic"
 ]
