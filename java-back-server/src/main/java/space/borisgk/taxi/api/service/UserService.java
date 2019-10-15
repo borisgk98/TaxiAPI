@@ -143,7 +143,7 @@ public class UserService extends AbstractCrudService<User> {
         userReportRepository.save(userReport);
     }
 
-    public UserStatisticDto getStatistic(Integer id) {
+    public UserStatisticDto getStatistics(Integer id) {
         UserStatisticDto statistic = new UserStatisticDto();
         statistic.setReportCount(userReportRepository.countByUser(id));
         return statistic;

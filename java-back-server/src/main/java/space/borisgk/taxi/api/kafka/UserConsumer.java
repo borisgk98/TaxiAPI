@@ -116,14 +116,14 @@ public class UserConsumer {
         }
     }
 
-    @KafkaListener(topics = "request.user.statistic", groupId = "server-java")
+    @KafkaListener(topics = "request.user.statistics", groupId = "server-java")
     public void userStatistic(String payload) throws ServerException {
         try {
             SocketDataWrapper socketDataWrapper = om.readValue(payload, SocketDataWrapper.class);
             Integer id = Integer.parseInt(socketDataWrapper.getPayload());
-            UserStatisticDto userStatisticDto = userService.getStatistic(id);
+            UserStatisticDto userStatisticDto = userService.getStatistics(id);
             String result = om.writeValueAsString(SocketDataWrapper.builder().payload(om.writeValueAsString(userStatisticDto)).socket(socketDataWrapper.getSocket()).build());
-            kafkaTemplate.send("response.user.statistic", result);
+            kafkaTemplate.send("response.user.statistics", result);
         }
         catch (Exception e) {
             throw new ServerException(e);
