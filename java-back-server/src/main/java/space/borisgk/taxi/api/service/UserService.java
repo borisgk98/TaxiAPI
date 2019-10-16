@@ -145,7 +145,7 @@ public class UserService extends AbstractCrudService<User> {
     public UserStatisticDto getStatistics(Integer id) {
         UserStatisticDto statistic = new UserStatisticDto();
         statistic.setReportsCount(userReportRepository.countByUser(id));
-        statistic.setTripsCount(tripRepository.countByUserAndStatuses(id, TripStatus.getNotDeletedIds()));
+        statistic.setTripsCount(tripRepository.countByUserAndStatuses(id, List.of(TripStatus.ACTIVE.ordinal())));
         return statistic;
     }
 
