@@ -47,3 +47,28 @@ BEGIN
 END;
 $BODY$
     LANGUAGE plpgsql;
+    
+    
+-- прогнозируемое дополнительное время, нужно пользователю, чтобы воспользоваться этой поездкой относительно идеальной поездки (неполный поиск)
+CREATE OR REPLACE FUNCTION compute_trip_rate(
+    latFrom double precision,
+    longFrom double precision,
+    tripLatFrom double precision,
+    tripLongFrom double precision,
+    targetTime timestamp,
+    tripTime timestamp
+)
+    RETURNS double precision AS
+$BODY$
+DECLARE
+--     distance delta in km
+    startDelta double precision;
+--     delta time in seconds
+    timeDelta double precision;
+BEGIN
+    startDelta := distance_delta(latFrom, longFrom, tripLatFrom, tripLongFrom);
+    timeDelta := cast(extract(epoch from (targetTime - tripTime)) as double precision);
+    return startDelta * 1000 / (5.0 / 60.0 / 60.0) * 2 + timeDelta;
+END;
+$BODY$
+    LANGUAGE plpgsql;

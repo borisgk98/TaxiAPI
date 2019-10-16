@@ -93,16 +93,19 @@ public class TripService extends AbstractCrudService<Trip> {
                     ")\n" +
                     "select * from s\n" +
                     "where s.status in :statuses and s.date >= now()\n" +
-                    "order by distance_delta(\n" +
-                    "              lat_from,\n" +
-                    "              long_from,\n" +
-                    "              cast(:latFrom as double precision),\n" +
-                    "              cast(:longFrom as double precision)\n" +
-                    "          );", Trip.class);
+                    "order by compute_trip_rate(\n" +
+                    "                 lat_from,\n" +
+                    "                 long_from,\n" +
+                    "                 cast(:latFrom as double precision),\n" +
+                    "                 cast(:longFrom as double precision),\n" +
+                    "                 cast(:tripTime as timestamp),\n" +
+                    "                 date\n" +
+                    "             );", Trip.class);
             query1.setParameter("statuses", List.of(TripStatus.ACTIVE.ordinal()));
             query1.setParameter("latFrom", searchRequest.getLatFrom());
             query1.setParameter("longFrom", searchRequest.getLongFrom());
             query1.setParameter("id", userId);
+            query1.setParameter("tripTime", searchRequest.getDate());
             List<Trip> friendsTrips = query1.getResultList();
             for (Trip trip : friendsTrips) {
                 trip.setHasFriends(true);
@@ -129,16 +132,19 @@ public class TripService extends AbstractCrudService<Trip> {
                     ")\n" +
                     "select * from trip\n" +
                     "where status in :statuses\n and trip.id not in (select id from s) and trip.date >= now()\n" +
-                    "order by distance_delta(\n" +
-                    "              lat_from,\n" +
-                    "              long_from,\n" +
-                    "              cast(:latFrom as double precision),\n" +
-                    "              cast(:longFrom as double precision)\n" +
-                    "          );", Trip.class);
+                    "order by compute_trip_rate(\n" +
+                    "                 lat_from,\n" +
+                    "                 long_from,\n" +
+                    "                 cast(:latFrom as double precision),\n" +
+                    "                 cast(:longFrom as double precision),\n" +
+                    "                 cast(:tripTime as timestamp),\n" +
+                    "                 date\n" +
+                    "             );", Trip.class);
             query2.setParameter("statuses", List.of(TripStatus.ACTIVE.ordinal()));
             query2.setParameter("latFrom", searchRequest.getLatFrom());
             query2.setParameter("longFrom", searchRequest.getLongFrom());
             query2.setParameter("id", userId);
+            query2.setParameter("tripTime", searchRequest.getDate());
             List<Trip> anotherTrips = query2.getResultList();
             anotherTrips.forEach(trip -> trip.setHasFriends(false));
             List<Trip> all = new ArrayList<>();
