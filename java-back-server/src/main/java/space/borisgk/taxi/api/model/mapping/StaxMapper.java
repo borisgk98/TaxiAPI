@@ -44,6 +44,7 @@ public interface StaxMapper {
     UserDto e2dto(User user);
 
     @Mapping(source = "date", target = "date", qualifiedByName = "string2date")
+    @Mapping(source = "numberOfSeats", target = "numberOfSeats")
     Trip dto2e(TripDto tripDto);
 
     @Mapping(source = "date", target = "date", dateFormat = "YYYY-MM-dd'T'HH:mm:ss'Z'")

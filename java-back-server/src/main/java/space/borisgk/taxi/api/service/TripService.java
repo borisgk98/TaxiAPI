@@ -222,7 +222,7 @@ public class TripService extends AbstractCrudService<Trip> {
                     "    where t.status in :statuses and taxi_user.id = :id\n" +
                     ")\n" +
                     "select * from trip\n" +
-                    "where status != :status and trip.id not in (select id from s) and distance_delta(\n" +
+                    "where trip.status in (:statuses) and trip.id not in (select id from s) and distance_delta(\n" +
                     "              lat_from,\n" +
                     "              long_from,\n" +
                     "              cast(:latFrom as double precision),\n" +
