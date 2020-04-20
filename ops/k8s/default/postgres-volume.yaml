@@ -1,0 +1,35 @@
+#pg base volume claim:  pg-base-volume.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pg-base-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+#pg data volume claim: pg-mdf-volume.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pg-mdf-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+#pg logs volume claim: pg-ldf-volume.yaml   
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pg-ldf-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi   
