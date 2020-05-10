@@ -5,6 +5,7 @@ WORKDIR /home/gradle/builddir
 WORKDIR src/main/resources
 #RUN rm application.properties
 #RUN cp deploy.properties application.properties
+RUN cp application.dist.yaml application.yaml
 WORKDIR ../../..
 RUN gradle bootJar
 

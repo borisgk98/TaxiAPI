@@ -19,6 +19,14 @@ spec:
         env:
         - name: spring.kafka.bootstrap-servers
           value: kafka-taxi:9092
+        - name: spring.datasource.url
+          value: "jdbc:postgresql://postgres-clusterip:5432/postgres"
+        - name: spring.datasource.password
+          value: "postgrespass1289"
+        - name: spring.jpa.properties.hibernate.dialect
+          value: "org.hibernate.dialect.PostgreSQLDialect"
+        - name: spring.jpa.hibernate.ddl-auto
+          value: "update"
 ---
 apiVersion: v1
 kind: Service
